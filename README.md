@@ -1,6 +1,6 @@
-# Studio: Premium NotebookLM + Recall Study Workspace
+# Styrud: Premium NotebookLM + Recall Study Workspace
 
-**Studio** is a premium, macOS-inspired study workspace combining the multi-speaker research synthesis of Google's **NotebookLM** with the force-directed semantic clustering map of **Recall**. Built on a React (TypeScript) + Vite frontend and a FastAPI backend, Studio transforms your PDFs, text files, and link bookmarks into a customized, animated visual study galaxy.
+**Styrud** is a premium, macOS-inspired study workspace combining the multi-speaker research synthesis of Google's **NotebookLM** with the force-directed semantic clustering map of **Recall**. Built on a React (TypeScript) + Vite frontend and a FastAPI backend, Studio transforms your PDFs, text files, and link bookmarks into a customized, animated visual study galaxy.
 
 ---
 

@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+backend/venv/
+venv/
+
+# Environment secrets
+.env
+.env.*
+
+# Local databases and uploads
+backend/db.json
+backend/uploads/*
+backend/static/audio/*
+!backend/uploads/.gitkeep
+!backend/static/audio/.gitkeep
+
+# Production builds
+dist/
+build/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

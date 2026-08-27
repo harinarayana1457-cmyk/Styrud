@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { 
   FolderOpen, 
   Plus, 
@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 
 // View components
-import StudioDashboard from './components/StudioDashboard';
+import StyrudDashboard from './components/StyrudDashboard';
 import RecallGraph from './components/RecallGraph';
 import AudioOverview from './components/AudioOverview';
 import SlideDeckViewer from './components/SlideDeckViewer';
@@ -417,22 +417,22 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex bg-studio-dark overflow-hidden font-sans select-none antialiased relative">
+    <div className="h-screen flex bg-styrud-dark overflow-hidden font-sans select-none antialiased relative">
       
       {/* 1. LEFT SIDEBAR: Source files, Recall adding, and API config */}
       <aside 
         style={{ width: leftWidth }} 
-        className="border-r border-studio-border bg-[#141416]/95 backdrop-blur-md flex flex-col shrink-0 overflow-hidden"
+        className="border-r border-styrud-border bg-[#141416]/95 backdrop-blur-md flex flex-col shrink-0 overflow-hidden"
       >
         
         {/* Sidebar Header */}
-        <div className="p-5 border-b border-studio-border flex items-center justify-between">
+        <div className="p-5 border-b border-styrud-border flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             {/* Glossy Red Jelly Bubble 'S' Logo */}
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center font-bold text-sm tracking-tighter shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-float-delayed">
               S
             </div>
-            <span className="font-bold text-base text-zinc-100 tracking-tight">Studio</span>
+            <span className="font-bold text-base text-zinc-100 tracking-tight">Styrud</span>
           </div>
           <div className="flex gap-1.5">
             <button
@@ -440,7 +440,7 @@ export default function App() {
                 setShowRecallGraph(false);
                 setActiveTool(null);
               }}
-              className={`p-1.5 rounded-lg transition-all duration-300 ${!showRecallGraph && !activeTool ? 'bg-white/10 text-white' : 'text-studio-textMuted hover:text-white'}`}
+              className={`p-1.5 rounded-lg transition-all duration-300 ${!showRecallGraph && !activeTool ? 'bg-white/10 text-white' : 'text-styrud-textMuted hover:text-white'}`}
               title="Dashboard"
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -450,7 +450,7 @@ export default function App() {
                 setShowRecallGraph(true);
                 setActiveTool(null);
               }}
-              className={`p-1.5 rounded-lg transition-all duration-300 ${showRecallGraph ? 'bg-white/10 text-white' : 'text-studio-textMuted hover:text-white'}`}
+              className={`p-1.5 rounded-lg transition-all duration-300 ${showRecallGraph ? 'bg-white/10 text-white' : 'text-styrud-textMuted hover:text-white'}`}
               title="Recall Knowledge Graph"
             >
               <Network className="w-4 h-4" />
@@ -459,8 +459,8 @@ export default function App() {
         </div>
 
         {/* Source Addition Buttons */}
-        <div className="p-5 border-b border-studio-border flex flex-col gap-2">
-          <h3 className="text-[10px] font-semibold text-studio-textMuted uppercase tracking-wider mb-1">Add Source Assets</h3>
+        <div className="p-5 border-b border-styrud-border flex flex-col gap-2">
+          <h3 className="text-[10px] font-semibold text-styrud-textMuted uppercase tracking-wider mb-1">Add Source Assets</h3>
           
           <div className="flex gap-2">
             {/* File uploader */}
@@ -487,13 +487,13 @@ export default function App() {
 
           {/* Inline Link form */}
           {showAddLink && (
-            <form onSubmit={handleAddLink} className="mt-3 p-3.5 bg-studio-dark/50 border border-white/10 rounded-xl flex flex-col gap-2.5">
+            <form onSubmit={handleAddLink} className="mt-3 p-3.5 bg-styrud-dark/50 border border-white/10 rounded-xl flex flex-col gap-2.5">
               <input 
                 type="text" 
                 placeholder="Title" 
                 value={linkTitle} 
                 onChange={e => setLinkTitle(e.target.value)}
-                className="bg-studio-panel border border-white/10 focus:border-white/30 px-3 py-2 rounded-lg text-xs text-white placeholder:text-zinc-650 focus:outline-none transition-all duration-300"
+                className="bg-styrud-panel border border-white/10 focus:border-white/30 px-3 py-2 rounded-lg text-xs text-white placeholder:text-zinc-650 focus:outline-none transition-all duration-300"
                 required
               />
               <input 
@@ -501,7 +501,7 @@ export default function App() {
                 placeholder="https://" 
                 value={linkUrl} 
                 onChange={e => setLinkUrl(e.target.value)}
-                className="bg-studio-panel border border-white/10 focus:border-white/30 px-3 py-2 rounded-lg text-xs text-white placeholder:text-zinc-650 focus:outline-none transition-all duration-300"
+                className="bg-styrud-panel border border-white/10 focus:border-white/30 px-3 py-2 rounded-lg text-xs text-white placeholder:text-zinc-650 focus:outline-none transition-all duration-300"
                 required
               />
               <button 
@@ -517,13 +517,13 @@ export default function App() {
         {/* Source Items Ingested List */}
         <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-[10px] font-semibold text-studio-textMuted uppercase tracking-wider">Sources List</h3>
+            <h3 className="text-[10px] font-semibold text-styrud-textMuted uppercase tracking-wider">Sources List</h3>
             <button
               onClick={() => setSelectedAssetId(null)}
               className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all duration-300 border ${
                 selectedAssetId === null 
                   ? 'bg-white border-white text-black' 
-                  : 'border-white/10 hover:border-white/20 text-studio-textMuted hover:text-white'
+                  : 'border-white/10 hover:border-white/20 text-styrud-textMuted hover:text-white'
               }`}
             >
               All Focus
@@ -571,9 +571,9 @@ export default function App() {
         {/* API Status panel (Click to configure keys modal) */}
         <div 
           onClick={() => setShowKeysModal(true)}
-          className="p-5 border-t border-studio-border bg-studio-panel/50 hover:bg-white/[0.02] text-xs flex flex-col gap-2 cursor-pointer transition-all duration-300 group"
+          className="p-5 border-t border-styrud-border bg-styrud-panel/50 hover:bg-white/[0.02] text-xs flex flex-col gap-2 cursor-pointer transition-all duration-300 group"
         >
-          <div className="flex items-center justify-between text-studio-textMuted font-semibold uppercase tracking-wider group-hover:text-white transition duration-300">
+          <div className="flex items-center justify-between text-styrud-textMuted font-semibold uppercase tracking-wider group-hover:text-white transition duration-300">
             <span>Model Config</span>
             <Database className="w-3.5 h-3.5 text-zinc-650 group-hover:text-purple-400 transition duration-300" />
           </div>
@@ -613,14 +613,14 @@ export default function App() {
         <div className="absolute inset-y-0 -left-1.5 -right-1.5 cursor-col-resize"></div>
       </div>
 
-      {/* 2. CENTER STAGE: Main studio tools dashboard & content visualizers */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-studio-dark p-6 md:p-8 relative">
+      {/* 2. CENTER STAGE: Main styrud tools dashboard & content visualizers */}
+      <main className="flex-1 flex flex-col overflow-hidden bg-styrud-dark p-6 md:p-8 relative">
         
         {/* Main Stage Top Navigation context bar with Lime curves outline */}
         <div className="mb-6 flex justify-between items-center text-xs text-zinc-400 bg-[#141416]/80 border border-white/10 hover:border-lime-500/25 px-5 py-3.5 rounded-2xl shadow-sm transition duration-300">
           <div className="flex items-center gap-2 font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-ping"></span>
-            <span className="text-studio-textMuted text-[11px]">FOCUS:</span>
+            <span className="text-styrud-textMuted text-[11px]">FOCUS:</span>
             <span className="text-white font-semibold uppercase tracking-wider">
               {selectedAssetId 
                 ? assets.find(a => a.id === selectedAssetId)?.title || 'Focused Source' 
@@ -630,7 +630,7 @@ export default function App() {
           <div className="flex items-center gap-1.5 text-zinc-550">
             <span className="text-[11px] uppercase tracking-wider">LAYOUT: </span>
             <span className="text-white font-bold capitalize">
-              {showRecallGraph ? 'Recall Graph' : activeTool || 'Studio Grid'}
+              {showRecallGraph ? 'Recall Graph' : activeTool || 'Styrud Grid'}
             </span>
           </div>
         </div>
@@ -692,7 +692,7 @@ export default function App() {
               onBack={() => setActiveTool(null)}
             />
           ) : (
-            <StudioDashboard 
+            <StyrudDashboard 
               onSelectTool={(tool, params) => {
                 setActiveTool(tool);
                 if (params) setExtraParams(params);
@@ -719,11 +719,11 @@ export default function App() {
       {/* 3. RIGHT SIDEBAR: Multitasking Reasoning panel (Gemini Q&A) */}
       <section 
         style={{ width: rightWidth }} 
-        className="border-l border-studio-border bg-[#141416]/95 backdrop-blur-md flex flex-col shrink-0 overflow-hidden"
+        className="border-l border-styrud-border bg-[#141416]/95 backdrop-blur-md flex flex-col shrink-0 overflow-hidden"
       >
         
         {/* Chat Header */}
-        <div className="p-5 border-b border-studio-border flex items-center justify-between">
+        <div className="p-5 border-b border-styrud-border flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HelpCircle className="w-4 h-4 text-zinc-400" />
             <span className="font-semibold text-zinc-200 text-sm tracking-tight">Gemini Assistant</span>
@@ -785,14 +785,14 @@ export default function App() {
         </div>
 
         {/* Chat input box */}
-        <form onSubmit={handleSendMessage} className="p-4 border-t border-studio-border bg-[#141416]">
+        <form onSubmit={handleSendMessage} className="p-4 border-t border-styrud-border bg-[#141416]">
           <div className="relative flex items-center">
             <input
               type="text"
               placeholder="Ask a question..."
               value={chatInput}
               onChange={e => setChatInput(e.target.value)}
-              className="w-full bg-studio-dark border border-white/10 focus:border-purple-500/30 rounded-xl py-2.5 pl-4 pr-11 text-xs text-white focus:outline-none placeholder-zinc-650 transition-all duration-300"
+              className="w-full bg-styrud-dark border border-white/10 focus:border-purple-500/30 rounded-xl py-2.5 pl-4 pr-11 text-xs text-white focus:outline-none placeholder-zinc-650 transition-all duration-300"
             />
             <button
               type="submit"
@@ -836,7 +836,7 @@ export default function App() {
                   placeholder="AIzaSy..."
                   value={geminiKeyInput}
                   onChange={e => setGeminiKeyInput(e.target.value)}
-                  className="w-full bg-studio-dark border border-white/10 focus:border-purple-500/30 rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-700 focus:outline-none transition duration-300"
+                  className="w-full bg-styrud-dark border border-white/10 focus:border-purple-500/30 rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-700 focus:outline-none transition duration-300"
                   required
                 />
                 <p className="text-[9px] text-zinc-550 mt-1.5 leading-relaxed font-semibold">
@@ -853,7 +853,7 @@ export default function App() {
                   placeholder="sk-ant-..."
                   value={claudeKeyInput}
                   onChange={e => setClaudeKeyInput(e.target.value)}
-                  className="w-full bg-studio-dark border border-white/10 focus:border-purple-500/30 rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-700 focus:outline-none transition duration-300"
+                  className="w-full bg-styrud-dark border border-white/10 focus:border-purple-500/30 rounded-xl px-4 py-3 text-xs text-white placeholder-zinc-700 focus:outline-none transition duration-300"
                 />
                 <p className="text-[9px] text-zinc-550 mt-1.5 leading-relaxed font-semibold">
                   Powers secondary visual assets rendering. Defaults to Gemini if skipped.
@@ -864,7 +864,7 @@ export default function App() {
               <div className="p-3.5 bg-white/[0.02] border border-white/[0.06] rounded-2xl flex items-start gap-2.5 text-[10px] text-zinc-400 leading-relaxed font-medium">
                 <AlertCircle className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Note:</strong> NotebookLM is a proprietary consumer product and does not issue public API keys. Studio uses the official Google Gemini Developer API to power equivalent features locally.
+                  <strong>Note:</strong> NotebookLM is a proprietary consumer product and does not issue public API keys. Styrud uses the official Google Gemini Developer API to power equivalent features locally.
                 </span>
               </div>
 

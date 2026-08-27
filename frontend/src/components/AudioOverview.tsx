@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Play, Pause, ChevronLeft, Disc, AlertCircle } from 'lucide-react';
 
 interface AudioOverviewProps {
@@ -94,13 +94,13 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
   };
 
   return (
-    <div className="flex flex-col gap-6 max-w-xl mx-auto w-full bg-studio-panel border border-white/[0.06] rounded-3xl p-6 shadow-xl">
+    <div className="flex flex-col gap-6 max-w-xl mx-auto w-full bg-styrud-panel border border-white/[0.06] rounded-3xl p-6 shadow-xl">
       <button 
         onClick={onBack}
         className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-550 hover:text-white transition duration-300 w-fit"
       >
         <ChevronLeft className="w-4 h-4" />
-        Back to Studio
+        Back to Styrud
       </button>
 
       <div className="flex items-center gap-3 border-b border-white/[0.06] pb-4">

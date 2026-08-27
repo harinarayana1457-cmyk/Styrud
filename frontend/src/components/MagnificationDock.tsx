@@ -1,4 +1,4 @@
-/**
+﻿/**
  * MagnificationDock Component
  * 
  * Playful, colorful macOS-inspired dock component with fluid magnification effects, 
@@ -120,7 +120,7 @@ function DockLabel({ children, className = '', isHovered }: DockLabelProps) {
           animate={{ opacity: 1, y: -12, scale: 1 }}
           exit={{ opacity: 0, y: 0, scale: 0.9 }}
           transition={{ duration: 0.15, ease: 'easeOut' }}
-          className={`${className} absolute -top-8 left-1/2 w-fit whitespace-pre rounded-full border border-white/10 bg-studio-panel px-3 py-1 text-[9px] font-black uppercase tracking-wider text-white shadow-xl backdrop-blur-md font-sans`}
+          className={`${className} absolute -top-8 left-1/2 w-fit whitespace-pre rounded-full border border-white/10 bg-styrud-panel px-3 py-1 text-[9px] font-black uppercase tracking-wider text-white shadow-xl backdrop-blur-md font-sans`}
           role="tooltip"
           style={{ x: '-50%' }}
         >

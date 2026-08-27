@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   Volume2, 
   Presentation, 
@@ -13,11 +13,11 @@ import {
   Sparkles
 } from 'lucide-react';
 
-interface StudioDashboardProps {
+interface StyrudDashboardProps {
   onSelectTool: (tool: string, extra?: any) => void;
 }
 
-export default function StudioDashboard({ onSelectTool }: StudioDashboardProps) {
+export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) {
   const [selectedLanguage, setSelectedLanguage] = useState('english');
 
   const languages = [
@@ -133,14 +133,14 @@ export default function StudioDashboard({ onSelectTool }: StudioDashboardProps) 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-5">
         <div>
           <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 font-sans uppercase text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-purple-400 to-lime-400 animate-pulse">
-            Motion Studio Hub
+            Motion Styrud Hub
           </h2>
           <p className="text-xs text-zinc-500 mt-1">Experience animated interactive learning dashboards built directly from your notes.</p>
         </div>
       </div>
 
       {/* Language select bubble banner */}
-      <div className="bg-gradient-to-br from-violet-950/20 via-studio-panel to-studio-panel border border-white/10 rounded-3xl p-6 shadow-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 transition duration-300">
+      <div className="bg-gradient-to-br from-violet-950/20 via-styrud-panel to-styrud-panel border border-white/10 rounded-3xl p-6 shadow-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 transition duration-300">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-purple-400 animate-spin" />

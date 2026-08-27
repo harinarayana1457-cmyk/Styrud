@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { FileText, ChevronLeft } from 'lucide-react';
 
 interface ReportsViewerProps {
@@ -88,7 +88,7 @@ export default function ReportsViewer({ assetId, onBack }: ReportsViewerProps) {
         className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
       >
         <ChevronLeft className="w-4 h-4" />
-        Back to Studio
+        Back to Styrud
       </button>
 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
@@ -102,7 +102,7 @@ export default function ReportsViewer({ assetId, onBack }: ReportsViewerProps) {
       </div>
 
       {loading ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[400px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[400px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-300">Compiling Report Documents...</span>
         </div>
@@ -111,7 +111,7 @@ export default function ReportsViewer({ assetId, onBack }: ReportsViewerProps) {
           {error}
         </div>
       ) : (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl p-6 md:p-8 shadow-xl">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl p-6 md:p-8 shadow-xl">
           <div className="prose prose-invert max-w-none">
             {renderMarkdown(report)}
           </div>

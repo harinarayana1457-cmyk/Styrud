@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Network, FileText, ZoomIn, ZoomOut, RefreshCw } from 'lucide-react';
 
 interface Node {
@@ -92,10 +92,10 @@ export default function RecallGraph({ onSelectAsset, refreshTrigger }: RecallGra
   };
 
   return (
-    <div className="bg-studio-panel border border-white/[0.06] rounded-3xl overflow-hidden h-[600px] flex flex-col relative w-full shadow-lg">
+    <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl overflow-hidden h-[600px] flex flex-col relative w-full shadow-lg">
       
       {/* Header controls */}
-      <div className="p-5 bg-studio-panel border-b border-white/[0.06] flex items-center justify-between z-10">
+      <div className="p-5 bg-styrud-panel border-b border-white/[0.06] flex items-center justify-between z-10">
         <div className="flex items-center gap-2.5">
           <Network className="w-5 h-5 text-white animate-spin" style={{ animationDuration: '6s' }} />
           <div>
@@ -256,7 +256,7 @@ export default function RecallGraph({ onSelectAsset, refreshTrigger }: RecallGra
           </svg>
 
           {/* Clusters Legend Overlay */}
-          <div className="absolute bottom-4 left-4 bg-studio-panel/90 border border-white/[0.06] p-4 rounded-2xl backdrop-blur-md max-w-xs shadow-lg">
+          <div className="absolute bottom-4 left-4 bg-styrud-panel/90 border border-white/[0.06] p-4 rounded-2xl backdrop-blur-md max-w-xs shadow-lg">
             <h4 className="text-[9px] font-black text-zinc-400 mb-2 uppercase tracking-widest">Concept Zones</h4>
             <div className="space-y-2">
               {clusters.map(cluster => (
@@ -273,7 +273,7 @@ export default function RecallGraph({ onSelectAsset, refreshTrigger }: RecallGra
 
           {/* Node Inspector Sidebar Overlay */}
           {selectedNode && (
-            <div className="absolute top-4 right-4 bottom-4 w-72 bg-studio-panel/95 border border-white/[0.08] rounded-2xl p-5 backdrop-blur-md flex flex-col shadow-2xl z-20 transition duration-300">
+            <div className="absolute top-4 right-4 bottom-4 w-72 bg-styrud-panel/95 border border-white/[0.08] rounded-2xl p-5 backdrop-blur-md flex flex-col shadow-2xl z-20 transition duration-300">
               <div className="flex-1 overflow-y-auto">
                 <div className="flex items-center gap-2 mb-4">
                   <span 

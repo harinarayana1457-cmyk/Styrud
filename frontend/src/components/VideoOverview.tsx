@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { PlaySquare, ChevronLeft, Play, Pause, AlertCircle, Volume2, RotateCcw } from 'lucide-react';
 
 interface Slide {
@@ -113,7 +113,7 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
         className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
       >
         <ChevronLeft className="w-4 h-4" />
-        Back to Studio
+        Back to Styrud
       </button>
 
       <div className="flex items-center gap-2 border-b border-white/[0.06] pb-4">
@@ -125,7 +125,7 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
       </div>
 
       {loading ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-300">Assembling Video...</span>
         </div>
@@ -183,7 +183,7 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
           </div>
 
           {/* Player controls */}
-          <div className="bg-studio-panel border border-white/[0.06] rounded-3xl p-4 flex items-center justify-between shadow-md">
+          <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl p-4 flex items-center justify-between shadow-md">
             <div className="flex items-center gap-3">
               <button
                 onClick={togglePlay}

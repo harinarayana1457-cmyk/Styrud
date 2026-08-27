@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Presentation, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
 
 interface Slide {
@@ -57,7 +57,7 @@ export default function SlideDeckViewer({ assetId, onBack }: SlideDeckViewerProp
         className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
       >
         <ChevronLeft className="w-4 h-4" />
-        Back to Studio
+        Back to Styrud
       </button>
 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
@@ -74,7 +74,7 @@ export default function SlideDeckViewer({ assetId, onBack }: SlideDeckViewerProp
       </div>
 
       {loading ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-300">Assembling Slides...</span>
         </div>
@@ -83,7 +83,7 @@ export default function SlideDeckViewer({ assetId, onBack }: SlideDeckViewerProp
           {error}
         </div>
       ) : slides.length === 0 ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[380px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[380px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
           No slides found
         </div>
       ) : (
@@ -111,7 +111,7 @@ export default function SlideDeckViewer({ assetId, onBack }: SlideDeckViewerProp
 
               {/* Slide footer branding */}
               <div className="flex justify-between items-center text-[9px] text-black/50 uppercase tracking-widest font-mono font-bold">
-                <span>Visual Studio Model</span>
+                <span>Visual Styrud Model</span>
                 <span>{currentSlide + 1} of {slides.length}</span>
               </div>
             </div>
@@ -127,7 +127,7 @@ export default function SlideDeckViewer({ assetId, onBack }: SlideDeckViewerProp
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex justify-between items-center bg-studio-panel border border-white/[0.06] rounded-3xl p-4 shadow-md">
+          <div className="flex justify-between items-center bg-styrud-panel border border-white/[0.06] rounded-3xl p-4 shadow-md">
             <button
               onClick={handlePrev}
               disabled={currentSlide === 0}

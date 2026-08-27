@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { HelpCircle, ChevronLeft, Award } from 'lucide-react';
 
 interface Question {
@@ -90,7 +90,7 @@ export default function QuizViewer({ assetId, onBack }: QuizViewerProps) {
         className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
       >
         <ChevronLeft className="w-4 h-4" />
-        Back to Studio
+        Back to Styrud
       </button>
 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
@@ -109,7 +109,7 @@ export default function QuizViewer({ assetId, onBack }: QuizViewerProps) {
       </div>
 
       {loading ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[350px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[350px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-300">Drafting Questions...</span>
         </div>
@@ -118,11 +118,11 @@ export default function QuizViewer({ assetId, onBack }: QuizViewerProps) {
           {error}
         </div>
       ) : questions.length === 0 ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[350px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[350px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
           No questions generated
         </div>
       ) : finished ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl p-8 flex flex-col items-center text-center shadow-xl gap-5 animate-float">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl p-8 flex flex-col items-center text-center shadow-xl gap-5 animate-float">
           <Award className="w-12 h-12 text-yellow-450 animate-bounce" />
           <div>
             <h3 className="text-lg font-bold text-white mb-1 uppercase tracking-wider">Evaluation Completed</h3>
@@ -146,7 +146,7 @@ export default function QuizViewer({ assetId, onBack }: QuizViewerProps) {
         <div className="flex flex-col gap-4">
           
           {/* Question Box */}
-          <div className="bg-studio-panel border border-white/[0.06] rounded-3xl p-6 shadow-xl flex flex-col gap-5">
+          <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl p-6 shadow-xl flex flex-col gap-5">
             <h3 className="text-sm md:text-base font-bold text-zinc-200 leading-relaxed uppercase tracking-wider">
               {questions[currentIdx].question}
             </h3>
@@ -179,7 +179,7 @@ export default function QuizViewer({ assetId, onBack }: QuizViewerProps) {
                     className={`p-4 border rounded-2xl cursor-pointer transition-all duration-300 flex items-center justify-between text-xs font-bold tracking-wider ${optStyle}`}
                   >
                     <span>{opt}</span>
-                    <span className="text-[9px] bg-studio-dark px-2.5 py-1 border border-white/5 rounded-full font-mono font-bold shrink-0 select-none text-zinc-400">
+                    <span className="text-[9px] bg-styrud-dark px-2.5 py-1 border border-white/5 rounded-full font-mono font-bold shrink-0 select-none text-zinc-400">
                       {letter}
                     </span>
                   </div>

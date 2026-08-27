@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Network, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
 interface MindNode {
@@ -34,7 +34,7 @@ function TreeNode({ node, depth = 0 }: { node: MindNode; depth: number }) {
             /* Root node: Lime green theme */
             ? 'bg-gradient-to-br from-lime-400 to-green-500 text-black border-transparent shadow-[0_0_20px_rgba(132,204,22,0.3)] animate-float' 
             : depth === 1
-            ? 'bg-gradient-to-br from-studio-panel to-studio-panel border-white/10 text-zinc-200 shadow'
+            ? 'bg-gradient-to-br from-styrud-panel to-styrud-panel border-white/10 text-zinc-200 shadow'
             : 'bg-transparent border-white/[0.04] text-zinc-500 font-bold'
         }`}>
           {node.name}
@@ -84,7 +84,7 @@ export default function MindMapViewer({ assetId, onBack }: MindMapViewerProps) {
         className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
       >
         <ChevronLeft className="w-4 h-4" />
-        Back to Studio
+        Back to Styrud
       </button>
 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
@@ -98,7 +98,7 @@ export default function MindMapViewer({ assetId, onBack }: MindMapViewerProps) {
       </div>
 
       {loading ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-300">Structuring Map...</span>
         </div>
@@ -107,11 +107,11 @@ export default function MindMapViewer({ assetId, onBack }: MindMapViewerProps) {
           {error}
         </div>
       ) : !mindmap ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[380px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[380px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
           No mind map generated
         </div>
       ) : (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl p-6 md:p-8 shadow-xl overflow-x-auto min-h-[420px] relative">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl p-6 md:p-8 shadow-xl overflow-x-auto min-h-[420px] relative">
           <TreeNode node={mindmap} depth={0} />
         </div>
       )}

@@ -1,6 +1,7 @@
 # Styrud: Premium NotebookLM + Recall Study Workspace
 
-**Styrud** is a premium, macOS-inspired study workspace combining the multi-speaker research synthesis of Google's **NotebookLM** with the force-directed semantic clustering map of **Recall**. Built on a React (TypeScript) + Vite frontend and a FastAPI backend, Studio transforms your PDFs, text files, and link bookmarks into a customized, animated visual study galaxy.
+**Styrud** is a premium, macOS-inspired study workspace combining the multi-speaker research synthesis of Google's **NotebookLM** with the force-directed semantic clustering map of **Recall**. Built on a React (TypeScript) + Vite frontend and a FastAPI backend, Styrud transforms your PDFs, text files, and link bookmarks into a customized, animated visual study galaxy.
+
 
 ---
 
@@ -79,7 +80,7 @@
 
 ## 🔑 Secure Credentials Management
 
-Studio manages API keys securely in accordance with the safe credentials protocol:
+Styrud manages API keys securely in accordance with the safe credentials protocol:
 - Input keys through the **Model Credentials Config** modal (opens automatically on startup if missing, or by clicking the **Model Config** panel in the bottom-left sidebar).
 - Keys are written to the root `.env` file, which is excluded from remote version tracking via `.gitignore`.
 - Keys are hot-reloaded in FastAPI memory immediately without service restarts.

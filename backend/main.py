@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import uuid
 import shutil
@@ -13,7 +13,7 @@ from backend.services.parser import parse_pdf, parse_text, clean_text
 from backend.services.cluster import cluster_and_project
 from backend.services import ai, audio
 
-app = FastAPI(title="Studio API", description="NotebookLM + Recall study tool backend")
+app = FastAPI(title="Styrud API", description="NotebookLM + Recall study tool backend")
 
 # Setup CORS so React frontend can call us
 app.add_middleware(

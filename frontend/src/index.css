@@ -1,4 +1,4 @@
-@font-face {
+﻿@font-face {
   font-family: 'Bagnard Sans';
   src: url('https://cdn.jsdelivr.net/gh/sebsan/Bagnard-Sans@master/BagnardSans.otf') format('opentype');
   font-weight: 400;
@@ -13,7 +13,7 @@
 
 @layer base {
   body {
-    @apply bg-studio-dark text-zinc-100 font-sans antialiased selection:bg-white selection:text-black;
+    @apply bg-styrud-dark text-zinc-100 font-sans antialiased selection:bg-white selection:text-black;
   }
 }
 

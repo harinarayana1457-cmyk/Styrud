@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { BarChart4, ChevronLeft, Calendar, ArrowRight, Tag } from 'lucide-react';
 
 interface InfographicItem {
@@ -50,7 +50,7 @@ export default function InfographicViewer({ assetId, onBack }: InfographicViewer
         className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
       >
         <ChevronLeft className="w-4 h-4" />
-        Back to Studio
+        Back to Styrud
       </button>
 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
@@ -64,7 +64,7 @@ export default function InfographicViewer({ assetId, onBack }: InfographicViewer
       </div>
 
       {loading ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[380px] flex flex-col items-center justify-center text-zinc-500 gap-3 shadow-xl">
           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
           <span className="text-[10px] uppercase font-bold tracking-widest text-zinc-300">Assembling Infographics...</span>
         </div>
@@ -73,7 +73,7 @@ export default function InfographicViewer({ assetId, onBack }: InfographicViewer
           {error}
         </div>
       ) : infographics.length === 0 ? (
-        <div className="bg-studio-panel border border-white/[0.06] rounded-3xl h-[380px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
+        <div className="bg-styrud-panel border border-white/[0.06] rounded-3xl h-[380px] flex items-center justify-center text-zinc-500 shadow-xl text-xs uppercase tracking-wider font-bold">
           No datasets parsed
         </div>
       ) : (
@@ -83,7 +83,7 @@ export default function InfographicViewer({ assetId, onBack }: InfographicViewer
             const isTimeline = seg.type === 'timeline' || seg.type === 'process';
             
             return (
-              <div key={sIdx} className="bg-studio-panel border border-white/[0.06] rounded-3xl p-6 shadow-xl flex flex-col gap-5">
+              <div key={sIdx} className="bg-styrud-panel border border-white/[0.06] rounded-3xl p-6 shadow-xl flex flex-col gap-5">
                 <div>
                   <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-1 flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-ping"></span>

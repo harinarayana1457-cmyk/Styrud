@@ -447,12 +447,12 @@ export default function App() {
       >
         
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            {/* Glossy Red Jelly Bubble 'S' Logo */}
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center font-bold text-sm tracking-tighter shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-float-delayed">
-              S
-            </div>
-            <span className="font-semibold text-lg text-white font-serif-instrument italic text-shadow-observe">Styrud</span>
+          <div className="flex items-center">
+            <img 
+              src="/logo.jpg" 
+              alt="Styrud" 
+              className="h-10 object-contain hover:scale-105 transition-transform duration-300 rounded-lg"
+            />
           </div>
           <div className="flex gap-1.5">
             <button

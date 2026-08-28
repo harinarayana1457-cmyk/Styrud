@@ -36,6 +36,60 @@ import InfographicViewer from './components/InfographicViewer';
 import DataTableViewer from './components/DataTableViewer';
 import MagnificationDock from './components/MagnificationDock';
 
+// Helper component to filter out dark background textures from logo images programmatically
+function TransparentLogo({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [processedSrc, setProcessedSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        setProcessedSrc(src);
+        return;
+      }
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      
+      // Remove dark pixels (charcoal background texture)
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // Threshold: if all R, G, B channels are dark (< 60), make transparent
+        if (r < 60 && g < 60 && b < 60) {
+          data[i + 3] = 0;
+        }
+      }
+      
+      ctx.putImageData(imageData, 0, 0);
+      setProcessedSrc(canvas.toDataURL());
+    };
+    img.onerror = () => {
+      setProcessedSrc(src);
+    };
+  }, [src]);
+
+  if (!processedSrc) {
+    return <div className="h-12 w-28 bg-transparent" />;
+  }
+
+  return (
+    <img 
+      src={processedSrc} 
+      alt={alt} 
+      className={className} 
+    />
+  );
+}
+
+
 interface Asset {
   id: string;
   title: string;
@@ -448,10 +502,10 @@ export default function App() {
         
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center justify-center">
-            <img 
+            <TransparentLogo 
               src="/logo.jpg" 
               alt="Styrud" 
-              className="h-12 object-contain hover:scale-105 transition-transform duration-300 select-none pointer-events-none mix-blend-screen filter contrast-[2.8] brightness-[0.75] drop-shadow-[0_0_15px_rgba(239,68,68,0.65)]"
+              className="h-12 object-contain hover:scale-105 transition-transform duration-300 select-none pointer-events-none"
             />
           </div>
           <div className="flex gap-1.5">

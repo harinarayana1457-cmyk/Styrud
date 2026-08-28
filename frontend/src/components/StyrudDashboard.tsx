@@ -132,8 +132,8 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       {/* Dynamic Animated Header */}
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-5">
         <div>
-          <h2 className="text-2xl tracking-tight flex items-center gap-2 font-serif-instrument italic font-normal lowercase text-white tracking-wider text-shadow-observe">
-            motion styrud hub
+          <h2 className="text-lg tracking-wider flex items-center gap-2 font-sans font-bold uppercase text-white text-shadow-observe">
+            Motion Styrud Hub
           </h2>
           <p className="text-xs text-zinc-400 mt-1 text-shadow-observe">Experience animated interactive learning dashboards built directly from your notes.</p>
         </div>
@@ -144,7 +144,7 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-purple-400 animate-spin" />
-            <h3 className="font-serif-instrument italic font-normal text-lg text-white lowercase tracking-wide text-shadow-observe">audio overview briefings</h3>
+            <h3 className="font-semibold text-sm text-zinc-200 tracking-tight text-shadow-observe">Audio Overview Briefings</h3>
           </div>
           <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed text-shadow-observe">
             Generate voice reviews directly in various Indian regional languages to review on the go.
@@ -195,7 +195,7 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
               
               <div className="mt-4">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-serif-instrument italic font-normal text-xl lowercase tracking-wide text-white text-shadow-observe">{t.title}</span>
+                  <span className="font-black text-sm uppercase tracking-wider text-shadow-observe">{t.title}</span>
                 </div>
                 <p className="text-xs opacity-90 mt-1 leading-relaxed text-shadow-observe">{t.description}</p>
               </div>

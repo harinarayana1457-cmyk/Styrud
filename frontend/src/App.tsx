@@ -681,7 +681,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-1.5 text-zinc-550">
             <span className="text-[11px] uppercase tracking-wider">LAYOUT: </span>
-            <span className="text-white font-serif-instrument italic text-base lowercase tracking-wide text-shadow-observe">
+            <span className="text-white font-bold capitalize text-shadow-observe">
               {showRecallGraph ? 'Recall Graph' : activeTool || 'Styrud Grid'}
             </span>
           </div>
@@ -778,7 +778,7 @@ export default function App() {
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HelpCircle className="w-4 h-4 text-zinc-400" />
-            <span className="font-semibold text-white font-serif-instrument italic text-base tracking-wide text-shadow-observe">Gemini Assistant</span>
+            <span className="font-semibold text-zinc-200 text-sm tracking-tight text-shadow-observe">Gemini Assistant</span>
           </div>
           <button 
             onClick={() => setChatHistory([])}
@@ -867,7 +867,7 @@ export default function App() {
             <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-2.5 text-white">
                 <Key className="w-5 h-5 text-purple-400 animate-pulse" />
-                <span className="font-serif-instrument italic font-normal text-base lowercase tracking-wide text-white">model credentials config</span>
+                <span className="font-bold text-sm uppercase tracking-wider text-white">Model Credentials Config</span>
               </div>
               <button 
                 onClick={handleSkipKeys}

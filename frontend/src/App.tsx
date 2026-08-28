@@ -143,15 +143,6 @@ export default function App() {
   const [geminiKeyInput, setGeminiKeyInput] = useState('');
   const [claudeKeyInput, setClaudeKeyInput] = useState('');
 
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.5;
-    }
-  }, []);
-
-
   // Load backend status and assets list
   const fetchStatusAndAssets = async () => {
     try {
@@ -481,20 +472,7 @@ export default function App() {
 
   return (
     <div className="h-screen flex bg-black overflow-hidden font-sans select-none antialiased relative">
-      
-      {/* BACKGROUND VIDEO */}
-      <video 
-        ref={videoRef}
-        src="https://designerstephen.github.io/public-assets/videos/observe-hero.mp4" 
-        className="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none z-0 opacity-40"
-        muted 
-        autoPlay 
-        loop 
-        playsInline 
-        preload="auto" 
-      />
-
-      {/* 1. LEFT SIDEBAR: Source files, Recall adding, and API config */}
+            {/* 1. LEFT SIDEBAR: Source files, Recall adding, and API config */}
       <aside 
         style={{ width: leftWidth }} 
         className="liquid-glass border-r border-white/10 flex flex-col shrink-0 overflow-hidden z-10"

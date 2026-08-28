@@ -159,7 +159,7 @@ export function MagnificationDock({
   const height = useSpring(heightRow, spring);
 
   return (
-    <motion.div style={{ height, scrollbarWidth: 'none' }} className="flex max-w-full items-center justify-center z-45">
+    <motion.div style={{ height, scrollbarWidth: 'none' }} className="flex max-w-full items-center justify-center z-[45]">
       <motion.div
         onMouseMove={({ pageX }) => {
           isHovered.set(1);

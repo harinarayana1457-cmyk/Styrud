@@ -828,7 +828,7 @@ export default function App() {
 
       {/* PREMIUM GLASSMORPHISM API KEY MODAL DIALOG */}
       {showKeysModal && (
-        <div className="fixed inset-0 bg-black/85 z-55 flex items-center justify-center p-4 backdrop-blur-md">
+        <div className="fixed inset-0 bg-black/85 z-[100] flex items-center justify-center p-4 backdrop-blur-md">
           <div className="liquid-glass border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative animate-float">
             
             {/* Header */}

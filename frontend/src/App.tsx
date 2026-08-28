@@ -447,11 +447,11 @@ export default function App() {
       >
         
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="flex items-center justify-center">
             <img 
               src="/logo.jpg" 
               alt="Styrud" 
-              className="h-10 object-contain hover:scale-105 transition-transform duration-300 rounded-lg"
+              className="h-12 object-contain hover:scale-105 transition-transform duration-300 select-none pointer-events-none mix-blend-screen filter brightness-125 contrast-110 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"
             />
           </div>
           <div className="flex gap-1.5">

@@ -451,7 +451,7 @@ export default function App() {
             <img 
               src="/logo.jpg" 
               alt="Styrud" 
-              className="h-12 object-contain hover:scale-105 transition-transform duration-300 select-none pointer-events-none mix-blend-screen filter brightness-125 contrast-110 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]"
+              className="h-12 object-contain hover:scale-105 transition-transform duration-300 select-none pointer-events-none mix-blend-screen filter contrast-[2.8] brightness-[0.75] drop-shadow-[0_0_15px_rgba(239,68,68,0.65)]"
             />
           </div>
           <div className="flex gap-1.5">

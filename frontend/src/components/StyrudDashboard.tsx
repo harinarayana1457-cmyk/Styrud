@@ -176,28 +176,53 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
 
       {/* Playful Floating Tools Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tools.map((t) => {
+        {tools.map((t, idx) => {
           const IconComponent = t.icon;
           return (
             <div
               key={t.id}
               onClick={() => onSelectTool(t.id, t.id === 'audio' ? { language: selectedLanguage } : undefined)}
-              className={`p-6 bg-gradient-to-br ${t.gradient} liquid-glass-border rounded-3xl cursor-pointer hover:-translate-y-2 hover:scale-[1.03] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-48 shadow-lg ${t.shadow} ${t.animation} group`}
+              className={`relative overflow-hidden p-5 bg-gradient-to-br ${t.gradient} liquid-glass-border rounded-3xl cursor-pointer hover:-translate-y-1.5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-40 shadow-lg ${t.shadow} group`}
             >
-              <div className="flex items-start justify-between">
-                <div className="p-3 bg-black/10 border border-white/10 rounded-2xl group-hover:scale-110 transition duration-300">
-                  <IconComponent className="w-5 h-5" />
-                </div>
-                {t.beta && (
-                  <span className="text-[8px] bg-black/20 border border-white/15 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono">Beta</span>
+              {/* Background large rotated watermark icon */}
+              <div className="absolute right-[-12px] bottom-[-12px] opacity-10 text-white pointer-events-none group-hover:rotate-12 group-hover:scale-125 transition-all duration-500">
+                <IconComponent size={100} strokeWidth={1} />
+              </div>
+
+              {/* Card Top Row */}
+              <div className="flex items-start justify-between z-10">
+                {/* Micro Badge for Index */}
+                <span className="text-[9px] font-mono font-bold tracking-widest opacity-40">
+                  {`0${idx + 1} / MODEL`}
+                </span>
+                
+                {/* Beta tag or standard badge */}
+                {t.beta ? (
+                  <span className="text-[7px] bg-white/20 border border-white/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono">
+                    Beta
+                  </span>
+                ) : (
+                  <span className="text-[7px] bg-black/10 border border-white/10 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Open →
+                  </span>
                 )}
               </div>
-              
-              <div className="mt-4">
-                <div className="flex items-center gap-1.5">
-                  <span className="font-black text-sm uppercase tracking-wider text-shadow-observe">{t.title}</span>
+
+              {/* Card Bottom Content */}
+              <div className="mt-auto z-10">
+                {/* Icon & Title Row */}
+                <div className="flex items-center gap-2 mb-1.5">
+                  <div className="p-1.5 bg-black/15 border border-white/15 rounded-lg group-hover:scale-105 transition-transform duration-300">
+                    <IconComponent className="w-4 h-4" />
+                  </div>
+                  <span className="font-sans font-bold text-sm uppercase tracking-wider text-shadow-observe">
+                    {t.title}
+                  </span>
                 </div>
-                <p className="text-xs opacity-90 mt-1 leading-relaxed text-shadow-observe">{t.description}</p>
+                {/* Description */}
+                <p className="text-[11px] opacity-80 leading-relaxed text-shadow-observe">
+                  {t.description}
+                </p>
               </div>
             </div>
           );

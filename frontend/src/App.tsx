@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   FolderOpen, 
   Plus, 
@@ -88,6 +88,15 @@ export default function App() {
   const [showKeysModal, setShowKeysModal] = useState(false);
   const [geminiKeyInput, setGeminiKeyInput] = useState('');
   const [claudeKeyInput, setClaudeKeyInput] = useState('');
+
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.5;
+    }
+  }, []);
+
 
   // Load backend status and assets list
   const fetchStatusAndAssets = async () => {
@@ -417,22 +426,33 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex bg-styrud-dark overflow-hidden font-sans select-none antialiased relative">
+    <div className="h-screen flex bg-black overflow-hidden font-sans select-none antialiased relative">
       
+      {/* BACKGROUND VIDEO */}
+      <video 
+        ref={videoRef}
+        src="https://designerstephen.github.io/public-assets/videos/observe-hero.mp4" 
+        className="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none z-0 opacity-40"
+        muted 
+        autoPlay 
+        loop 
+        playsInline 
+        preload="auto" 
+      />
+
       {/* 1. LEFT SIDEBAR: Source files, Recall adding, and API config */}
       <aside 
         style={{ width: leftWidth }} 
-        className="border-r border-styrud-border bg-[#141416]/95 backdrop-blur-md flex flex-col shrink-0 overflow-hidden"
+        className="liquid-glass border-r border-white/10 flex flex-col shrink-0 overflow-hidden z-10"
       >
         
-        {/* Sidebar Header */}
-        <div className="p-5 border-b border-styrud-border flex items-center justify-between">
+        <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             {/* Glossy Red Jelly Bubble 'S' Logo */}
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-white flex items-center justify-center font-bold text-sm tracking-tighter shadow-[0_0_15px_rgba(239,68,68,0.4)] animate-float-delayed">
               S
             </div>
-            <span className="font-bold text-base text-zinc-100 tracking-tight">Styrud</span>
+            <span className="font-semibold text-lg text-white font-serif-instrument italic text-shadow-observe">Styrud</span>
           </div>
           <div className="flex gap-1.5">
             <button
@@ -614,14 +634,14 @@ export default function App() {
       </div>
 
       {/* 2. CENTER STAGE: Main styrud tools dashboard & content visualizers */}
-      <main className="flex-1 flex flex-col overflow-hidden bg-styrud-dark p-6 md:p-8 relative">
+      <main className="flex-1 flex flex-col overflow-hidden bg-transparent p-6 md:p-8 relative z-10">
         
         {/* Main Stage Top Navigation context bar with Lime curves outline */}
-        <div className="mb-6 flex justify-between items-center text-xs text-zinc-400 bg-[#141416]/80 border border-white/10 hover:border-lime-500/25 px-5 py-3.5 rounded-2xl shadow-sm transition duration-300">
+        <div className="mb-6 flex justify-between items-center text-xs text-zinc-400 liquid-glass rounded-2xl px-5 py-3.5 shadow-sm transition duration-300">
           <div className="flex items-center gap-2 font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-ping"></span>
-            <span className="text-styrud-textMuted text-[11px]">FOCUS:</span>
-            <span className="text-white font-semibold uppercase tracking-wider">
+            <span className="text-zinc-550 text-[11px] uppercase tracking-wider">FOCUS:</span>
+            <span className="text-white font-semibold uppercase tracking-wider text-shadow-observe">
               {selectedAssetId 
                 ? assets.find(a => a.id === selectedAssetId)?.title || 'Focused Source' 
                 : 'All Combined Sources'}
@@ -629,7 +649,7 @@ export default function App() {
           </div>
           <div className="flex items-center gap-1.5 text-zinc-550">
             <span className="text-[11px] uppercase tracking-wider">LAYOUT: </span>
-            <span className="text-white font-bold capitalize">
+            <span className="text-white font-serif-instrument italic text-base lowercase tracking-wide text-shadow-observe">
               {showRecallGraph ? 'Recall Graph' : activeTool || 'Styrud Grid'}
             </span>
           </div>
@@ -719,14 +739,14 @@ export default function App() {
       {/* 3. RIGHT SIDEBAR: Multitasking Reasoning panel (Gemini Q&A) */}
       <section 
         style={{ width: rightWidth }} 
-        className="border-l border-styrud-border bg-[#141416]/95 backdrop-blur-md flex flex-col shrink-0 overflow-hidden"
+        className="liquid-glass border-l border-white/10 flex flex-col shrink-0 overflow-hidden z-10"
       >
         
         {/* Chat Header */}
-        <div className="p-5 border-b border-styrud-border flex items-center justify-between">
+        <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HelpCircle className="w-4 h-4 text-zinc-400" />
-            <span className="font-semibold text-zinc-200 text-sm tracking-tight">Gemini Assistant</span>
+            <span className="font-semibold text-white font-serif-instrument italic text-base tracking-wide text-shadow-observe">Gemini Assistant</span>
           </div>
           <button 
             onClick={() => setChatHistory([])}
@@ -785,14 +805,14 @@ export default function App() {
         </div>
 
         {/* Chat input box */}
-        <form onSubmit={handleSendMessage} className="p-4 border-t border-styrud-border bg-[#141416]">
+        <form onSubmit={handleSendMessage} className="p-4 border-t border-white/10 bg-black/20">
           <div className="relative flex items-center">
             <input
               type="text"
               placeholder="Ask a question..."
               value={chatInput}
               onChange={e => setChatInput(e.target.value)}
-              className="w-full bg-styrud-dark border border-white/10 focus:border-purple-500/30 rounded-xl py-2.5 pl-4 pr-11 text-xs text-white focus:outline-none placeholder-zinc-650 transition-all duration-300"
+              className="w-full bg-black/40 border border-white/10 focus:border-purple-500/30 rounded-xl py-2.5 pl-4 pr-11 text-xs text-white focus:outline-none placeholder-zinc-650 transition-all duration-300"
             />
             <button
               type="submit"
@@ -809,13 +829,13 @@ export default function App() {
       {/* PREMIUM GLASSMORPHISM API KEY MODAL DIALOG */}
       {showKeysModal && (
         <div className="fixed inset-0 bg-black/85 z-55 flex items-center justify-center p-4 backdrop-blur-md">
-          <div className="bg-[#141416] border border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative animate-float">
+          <div className="liquid-glass border-white/10 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative animate-float">
             
             {/* Header */}
             <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-2.5 text-white">
                 <Key className="w-5 h-5 text-purple-400 animate-pulse" />
-                <span className="font-bold text-sm uppercase tracking-wider">Model Credentials Config</span>
+                <span className="font-serif-instrument italic font-normal text-base lowercase tracking-wide text-white">model credentials config</span>
               </div>
               <button 
                 onClick={handleSkipKeys}

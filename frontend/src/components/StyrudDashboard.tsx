@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Volume2, 
   Presentation, 
@@ -132,21 +132,21 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       {/* Dynamic Animated Header */}
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-5">
         <div>
-          <h2 className="text-xl font-bold tracking-tight flex items-center gap-2 font-sans uppercase text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-purple-400 to-lime-400 animate-pulse">
-            Motion Styrud Hub
+          <h2 className="text-2xl tracking-tight flex items-center gap-2 font-serif-instrument italic font-normal lowercase text-white tracking-wider text-shadow-observe">
+            motion styrud hub
           </h2>
-          <p className="text-xs text-zinc-500 mt-1">Experience animated interactive learning dashboards built directly from your notes.</p>
+          <p className="text-xs text-zinc-400 mt-1 text-shadow-observe">Experience animated interactive learning dashboards built directly from your notes.</p>
         </div>
       </div>
 
       {/* Language select bubble banner */}
-      <div className="bg-gradient-to-br from-violet-950/20 via-styrud-panel to-styrud-panel border border-white/10 rounded-3xl p-6 shadow-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 transition duration-300">
+      <div className="liquid-glass border border-white/10 rounded-3xl p-6 shadow-lg flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 transition duration-300">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="w-4 h-4 text-purple-400 animate-spin" />
-            <h3 className="font-semibold text-sm text-zinc-200 tracking-tight">Audio Overview Briefings</h3>
+            <h3 className="font-serif-instrument italic font-normal text-lg text-white lowercase tracking-wide text-shadow-observe">audio overview briefings</h3>
           </div>
-          <p className="text-xs text-zinc-500 max-w-2xl leading-relaxed">
+          <p className="text-xs text-zinc-400 max-w-2xl leading-relaxed text-shadow-observe">
             Generate voice reviews directly in various Indian regional languages to review on the go.
           </p>
           <div className="flex flex-wrap gap-2 mt-4">
@@ -182,7 +182,7 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
             <div
               key={t.id}
               onClick={() => onSelectTool(t.id, t.id === 'audio' ? { language: selectedLanguage } : undefined)}
-              className={`p-6 bg-gradient-to-br ${t.gradient} border border-white/10 rounded-3xl cursor-pointer hover:-translate-y-2 hover:scale-[1.03] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-48 shadow-lg ${t.shadow} ${t.animation} group`}
+              className={`p-6 bg-gradient-to-br ${t.gradient} liquid-glass-border rounded-3xl cursor-pointer hover:-translate-y-2 hover:scale-[1.03] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-48 shadow-lg ${t.shadow} ${t.animation} group`}
             >
               <div className="flex items-start justify-between">
                 <div className="p-3 bg-black/10 border border-white/10 rounded-2xl group-hover:scale-110 transition duration-300">
@@ -195,9 +195,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
               
               <div className="mt-4">
                 <div className="flex items-center gap-1.5">
-                  <span className="font-black text-sm uppercase tracking-wider">{t.title}</span>
+                  <span className="font-serif-instrument italic font-normal text-xl lowercase tracking-wide text-white text-shadow-observe">{t.title}</span>
                 </div>
-                <p className="text-xs opacity-80 mt-1 leading-relaxed">{t.description}</p>
+                <p className="text-xs opacity-90 mt-1 leading-relaxed text-shadow-observe">{t.description}</p>
               </div>
             </div>
           );

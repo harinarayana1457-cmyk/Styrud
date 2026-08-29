@@ -138,7 +138,7 @@ type DockIconProps = {
 };
 
 function DockIcon({ children, className = '' }: DockIconProps) {
-  return <div className={`flex items-center justify-center text-white ${className}`}>{children}</div>;
+  return <div className={`flex items-center justify-center text-current ${className}`}>{children}</div>;
 }
 
 export function MagnificationDock({
@@ -169,7 +169,7 @@ export function MagnificationDock({
           isHovered.set(0);
           mouseX.set(Infinity);
         }}
-        className={`${className} flex items-end w-fit gap-3.5 rounded-full liquid-glass pb-2.5 px-5 shadow-2xl`}
+        className={`${className} flex items-end w-fit gap-5 rounded-full liquid-glass pb-3 px-6 shadow-2xl`}
         style={{ height: panelHeight }}
         role="toolbar"
         aria-label="Application dock"

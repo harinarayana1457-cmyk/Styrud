@@ -154,7 +154,7 @@ export function MagnificationDock({
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
 
-  const maxHeight = useMemo(() => magnification + 24, [magnification]);
+  const maxHeight = useMemo(() => magnification + 20, [magnification]);
   const heightRow = useTransform(isHovered, [0, 1], [panelHeight, maxHeight]);
   const height = useSpring(heightRow, spring);
 
@@ -169,7 +169,7 @@ export function MagnificationDock({
           isHovered.set(0);
           mouseX.set(Infinity);
         }}
-        className={`${className} flex items-end w-fit gap-5 rounded-full liquid-glass pb-3 px-6 shadow-2xl`}
+        className={`${className} flex items-center w-fit gap-5 rounded-full liquid-glass px-6 shadow-2xl`}
         style={{ height }}
         role="toolbar"
         aria-label="Application dock"

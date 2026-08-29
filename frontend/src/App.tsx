@@ -754,8 +754,8 @@ export default function App() {
         </div>
 
         {/* Floating Magnification Dock at bottom center */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 hidden md:block">
-          <MagnificationDock items={dockItems} magnification={72} baseItemSize={48} panelHeight={60} />
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 hidden md:block max-w-[calc(100%-2rem)]">
+          <MagnificationDock items={dockItems} magnification={56} baseItemSize={40} panelHeight={52} />
         </div>
 
       </main>

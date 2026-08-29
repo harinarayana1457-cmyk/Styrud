@@ -138,7 +138,7 @@ type DockIconProps = {
 };
 
 function DockIcon({ children, className = '' }: DockIconProps) {
-  return <div className={`flex items-center justify-center text-current ${className}`}>{children}</div>;
+  return <div className={`w-full h-full flex items-center justify-center text-current ${className}`}>{children}</div>;
 }
 
 export function MagnificationDock({
@@ -186,7 +186,6 @@ export function MagnificationDock({
             baseItemSize={baseItemSize}
           >
             <DockIcon>{item.icon}</DockIcon>
-            <DockLabel>{item.label}</DockLabel>
           </DockItem>
         ))}
       </motion.div>

@@ -39,9 +39,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Audio Overview',
       icon: Volume2,
       description: 'Engaging, multi-speaker voice briefings',
-      gradient: 'from-rose-500 via-red-500 to-red-650 text-white',
-      shadow: 'hover:shadow-[0_0_25px_rgba(239,68,68,0.35)]',
-      animation: 'animate-float',
+      textColor: 'text-red-450',
+      borderColor: 'border-red-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(239,68,68,0.25)]',
       beta: false
     },
     {
@@ -49,9 +49,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Slide deck',
       icon: Presentation,
       description: 'Geometric structured visual presentations',
-      gradient: 'from-amber-400 via-amber-500 to-yellow-500 text-black',
-      shadow: 'hover:shadow-[0_0_25px_rgba(245,158,11,0.35)]',
-      animation: 'animate-float-delayed',
+      textColor: 'text-amber-400',
+      borderColor: 'border-amber-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(245,158,11,0.22)]',
       beta: true
     },
     {
@@ -59,9 +59,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Video Overview',
       icon: PlaySquare,
       description: 'Synchronized slide narration voice player',
-      gradient: 'from-fuchsia-400 via-pink-400 to-pink-500 text-white',
-      shadow: 'hover:shadow-[0_0_25px_rgba(217,70,239,0.35)]',
-      animation: 'animate-float',
+      textColor: 'text-fuchsia-400',
+      borderColor: 'border-fuchsia-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(217,70,239,0.25)]',
       beta: false
     },
     {
@@ -69,9 +69,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Mind Map',
       icon: Network,
       description: 'Concept nodes and hierarchy trees',
-      gradient: 'from-lime-400 via-emerald-400 to-green-500 text-black',
-      shadow: 'hover:shadow-[0_0_25px_rgba(132,204,22,0.35)]',
-      animation: 'animate-float-delayed',
+      textColor: 'text-lime-400',
+      borderColor: 'border-lime-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(132,204,22,0.22)]',
       beta: false
     },
     {
@@ -79,9 +79,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Reports',
       icon: FileText,
       description: 'Deep summary reports and breakdown sheets',
-      gradient: 'from-cyan-400 via-teal-400 to-blue-500 text-white',
-      shadow: 'hover:shadow-[0_0_25px_rgba(6,182,212,0.35)]',
-      animation: 'animate-float',
+      textColor: 'text-cyan-400',
+      borderColor: 'border-cyan-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(6,182,212,0.25)]',
       beta: false
     },
     {
@@ -89,9 +89,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Flashcards',
       icon: Layers,
       description: 'Active recall training cards',
-      gradient: 'from-violet-500 via-purple-500 to-indigo-650 text-white',
-      shadow: 'hover:shadow-[0_0_25px_rgba(168,85,247,0.35)]',
-      animation: 'animate-float-delayed',
+      textColor: 'text-purple-400',
+      borderColor: 'border-purple-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(168,85,247,0.25)]',
       beta: false
     },
     {
@@ -99,9 +99,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Quiz',
       icon: HelpCircle,
       description: 'Multiple choice conceptual evaluations',
-      gradient: 'from-indigo-500 via-blue-500 to-violet-650 text-white',
-      shadow: 'hover:shadow-[0_0_25px_rgba(99,102,241,0.35)]',
-      animation: 'animate-float',
+      textColor: 'text-indigo-400',
+      borderColor: 'border-indigo-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(99,102,241,0.25)]',
       beta: false
     },
     {
@@ -109,9 +109,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Infographic',
       icon: BarChart4,
       description: 'Step timelines and data graphics templates',
-      gradient: 'from-pink-500 via-rose-450 to-fuchsia-600 text-white',
-      shadow: 'hover:shadow-[0_0_25px_rgba(236,72,153,0.35)]',
-      animation: 'animate-float-delayed',
+      textColor: 'text-pink-400',
+      borderColor: 'border-pink-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(236,72,153,0.25)]',
       beta: true
     },
     {
@@ -119,9 +119,9 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
       title: 'Data table',
       icon: Table,
       description: 'Extracted matrices and parameter comparisons',
-      gradient: 'from-teal-400 via-emerald-500 to-green-600 text-white',
-      shadow: 'hover:shadow-[0_0_25px_rgba(20,184,166,0.35)]',
-      animation: 'animate-float',
+      textColor: 'text-teal-400',
+      borderColor: 'border-teal-500/25',
+      shadow: 'hover:shadow-[0_0_30px_rgba(20,184,166,0.22)]',
       beta: false
     }
   ];
@@ -182,27 +182,27 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
             <div
               key={t.id}
               onClick={() => onSelectTool(t.id, t.id === 'audio' ? { language: selectedLanguage } : undefined)}
-              className={`relative overflow-hidden p-5 bg-gradient-to-br ${t.gradient} liquid-glass-border rounded-3xl cursor-pointer hover:-translate-y-1.5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-40 shadow-lg ${t.shadow} group`}
+              className={`relative overflow-hidden p-5 liquid-glass rounded-3xl cursor-pointer border border-white/10 hover:border-white/20 hover:-translate-y-1.5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-40 shadow-lg ${t.shadow} group`}
             >
               {/* Background large rotated watermark icon */}
-              <div className="absolute right-[-12px] bottom-[-12px] opacity-10 text-white pointer-events-none group-hover:rotate-12 group-hover:scale-125 transition-all duration-500">
+              <div className={`absolute right-[-12px] bottom-[-12px] opacity-[0.03] group-hover:opacity-10 ${t.textColor} pointer-events-none group-hover:rotate-12 group-hover:scale-125 transition-all duration-500`}>
                 <IconComponent size={100} strokeWidth={1} />
               </div>
 
               {/* Card Top Row */}
               <div className="flex items-start justify-between z-10">
                 {/* Micro Badge for Index */}
-                <span className="text-[9px] font-mono font-bold tracking-widest opacity-40">
+                <span className={`text-[9px] font-mono font-bold tracking-widest ${t.textColor} opacity-60`}>
                   {`0${idx + 1} / MODEL`}
                 </span>
                 
                 {/* Beta tag or standard badge */}
                 {t.beta ? (
-                  <span className="text-[7px] bg-white/20 border border-white/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono">
+                  <span className={`text-[7px] bg-white/5 border ${t.borderColor} px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono ${t.textColor}`}>
                     Beta
                   </span>
                 ) : (
-                  <span className="text-[7px] bg-black/10 border border-white/10 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-[7px] bg-white/5 border border-white/10 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     Open →
                   </span>
                 )}
@@ -212,15 +212,15 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
               <div className="mt-auto z-10">
                 {/* Icon & Title Row */}
                 <div className="flex items-center gap-2 mb-1.5">
-                  <div className="p-1.5 bg-black/15 border border-white/15 rounded-lg group-hover:scale-105 transition-transform duration-300">
+                  <div className={`p-1.5 bg-white/5 border border-white/10 rounded-lg group-hover:scale-105 transition-transform duration-300 ${t.textColor}`}>
                     <IconComponent className="w-4 h-4" />
                   </div>
-                  <span className="font-sans font-bold text-sm uppercase tracking-wider text-shadow-observe">
+                  <span className="font-sans font-bold text-sm uppercase tracking-wider text-white text-shadow-observe">
                     {t.title}
                   </span>
                 </div>
                 {/* Description */}
-                <p className="text-[11px] opacity-80 leading-relaxed text-shadow-observe">
+                <p className="text-[11px] text-zinc-400 group-hover:text-zinc-200 leading-relaxed text-shadow-observe transition-colors duration-300">
                   {t.description}
                 </p>
               </div>

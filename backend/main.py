@@ -1,4 +1,4 @@
-﻿import os
+import os
 import json
 import uuid
 import shutil
@@ -335,12 +335,6 @@ def save_keys(payload: KeysPayload):
     # 2. Hot-update in memory variables
     if payload.gemini_api_key:
         ai.GEMINI_KEY = payload.gemini_api_key.strip()
-        if ai.GEMINI_AVAILABLE:
-            try:
-                import google.generativeai as genai
-                genai.configure(api_key=ai.GEMINI_KEY)
-            except Exception as e:
-                print(f"Failed to configure Gemini: {e}")
     if payload.anthropic_api_key:
         ai.CLAUDE_KEY = payload.anthropic_api_key.strip()
         

@@ -19,7 +19,9 @@ import {
   BarChart4,
   Table,
   Key,
-  X
+  X,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 // View components
@@ -113,7 +115,368 @@ interface Status {
   assets_count: number;
 }
 
+// --- WebGL Warp Stripes Shader Constants ---
+const VERTEX_SHADER_SOURCE = `
+  attribute vec2 position;
+  varying vec2 v_uv;
+  void main() {
+    v_uv = position * 0.5 + 0.5;
+    gl_Position = vec4(position, 0.0, 1.0);
+  }
+`;
+
+const FRAGMENT_SHADER_SOURCE = `
+  precision highp float;
+  varying vec2 v_uv;
+
+  uniform vec2 u_resolution;
+  uniform float u_time;
+  uniform vec2 u_mouse;
+  uniform float u_intensity;
+
+  uniform vec3 u_ground_color;
+  uniform vec3 u_accent1_color;
+  uniform vec3 u_accent2_color;
+
+  #define GroundColor u_ground_color
+  #define Accent1 u_accent1_color
+  #define Accent2 u_accent2_color
+
+  // 2D Hash function
+  float hash(vec2 p) {
+    p = fract(p * vec2(127.1, 311.7));
+    p += dot(p, p + 19.19);
+    return fract(p.x * p.y);
+  }
+
+  // 2D Value Noise
+  float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    
+    float a = hash(i + vec2(0.0, 0.0));
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    
+    return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+  }
+
+  // 6-Octave Fractional Brownian Motion (FBM)
+  float fbm(vec2 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
+    for (int i = 0; i < 6; i++) {
+      value += amplitude * noise(p * frequency);
+      p = rot * p * 2.0;
+      amplitude *= 0.5;
+    }
+    return value;
+  }
+
+  // Two-Level Domain Warp Helper
+  float domainWarp(vec2 p, out vec2 q, out vec2 r, float time) {
+    q.x = fbm(p + vec2(0.0, 0.0) + vec2(0.05 * time, 0.03 * time));
+    q.y = fbm(p + vec2(5.2, 1.3) + vec2(-0.02 * time, 0.06 * time));
+    
+    r.x = fbm(p + 4.0 * q + vec2(1.7, 9.2) + vec2(0.04 * time, -0.04 * time));
+    r.y = fbm(p + 4.0 * q + vec2(8.3, 2.8) + vec2(0.05 * time, 0.02 * time));
+    
+    return fbm(p + 4.0 * r);
+  }
+
+  void main() {
+    // Normalize coordinates to maintain aspect ratio across viewports
+    vec2 uv = (gl_FragCoord.xy * 2.0 - u_resolution.xy) / min(u_resolution.x, u_resolution.y);
+    vec2 noiseUV = uv * 1.5;
+    vec2 mouseUV = (u_mouse * 2.0 - u_resolution.xy) / min(u_resolution.x, u_resolution.y);
+    
+    // Proximity to the cursor
+    float distToMouse = length(uv - mouseUV);
+    float localCursorInfluence = exp(-distToMouse * distToMouse * 3.0);
+    float activeIntensity = u_intensity;
+    
+    vec2 q;
+    vec2 r;
+    // Evaluate domain warp using the shared preamble
+    float warpVal = domainWarp(noiseUV, q, r, u_time * 0.15);
+    
+    // Generate diagonal stripes
+    vec2 stripeDir = normalize(vec2(1.0, 0.8));
+    float stripeCoord = dot(uv, stripeDir) * 12.0;
+    
+    // Displace the stripe PHASE rather than coordinate, holding the lattice structure
+    float warpStrength = 2.0 + activeIntensity * 4.0 + (localCursorInfluence * activeIntensity * 6.0);
+    float phase = stripeCoord - u_time * 0.3 + warpVal * warpStrength;
+    
+    // Combine primary wave and a harmonic frequency for detailed sub-stripes
+    float stripePattern = sin(phase);
+    float harmonic = sin(phase * 3.0 + 1.5) * 0.25;
+    float combinedPattern = stripePattern + harmonic;
+    
+    // Map stripes pattern to ground/accent boundaries
+    float stripes = smoothstep(-0.2, 0.6, combinedPattern);
+    
+    // Shift color using the domain warp values q and r to create material depth
+    float colorMix = 0.5 + 0.5 * sin(warpVal * 5.0 + dot(q, r) * 2.0 + u_time * 0.1);
+    vec3 stripeColor = mix(Accent1, Accent2, colorMix);
+    
+    // Sub-glow for texture
+    float glow = smoothstep(-0.8, 0.8, combinedPattern) * 0.35;
+    vec3 col = mix(GroundColor, stripeColor, stripes);
+    col += stripeColor * glow * 0.2;
+    
+    // Vignette
+    vec2 vignetteUV = gl_FragCoord.xy / u_resolution.xy;
+    float vignette = vignetteUV.x * vignetteUV.y * (1.0 - vignetteUV.x) * (1.0 - vignetteUV.y);
+    vignette = clamp(pow(vignette * 16.0, 0.25), 0.0, 1.0);
+    col *= mix(0.7, 1.0, vignette);
+    
+    gl_FragColor = vec4(col, 1.0);
+  }
+`;
+
 export default function App() {
+  // Theme state and toggle function
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    const root = window.document.documentElement;
+    if (nextTheme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  };
+
+  useEffect(() => {
+    // Ensure dark mode is active by default on mount
+    window.document.documentElement.classList.add('dark');
+  }, []);
+
+  // --- WebGL Shader Hooks & State ---
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [webglSupported, setWebglSupported] = useState(true);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  const mousePosRef = useRef({ x: 0, y: 0 });
+  const targetMousePosRef = useRef({ x: 0, y: 0 });
+  const intensityRef = useRef(0);
+  const targetIntensityRef = useRef(0);
+  const isMouseOverRef = useRef(false);
+  const lastMoveTimeRef = useRef(0);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', listener);
+    return () => mediaQuery.removeEventListener('change', listener);
+  }, []);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    let gl = canvas.getContext('webgl2', { alpha: false, antialias: true }) as WebGL2RenderingContext | WebGLRenderingContext | null;
+    if (!gl) {
+      gl = canvas.getContext('webgl', { alpha: false, antialias: true }) as WebGLRenderingContext | null;
+    }
+
+    if (!gl) {
+      setWebglSupported(false);
+      return;
+    }
+
+    const createShader = (glCtx: WebGLRenderingContext | WebGL2RenderingContext, type: number, source: string) => {
+      const shader = glCtx.createShader(type);
+      if (!shader) return null;
+      glCtx.shaderSource(shader, source);
+      glCtx.compileShader(shader);
+      if (!glCtx.getShaderParameter(shader, glCtx.COMPILE_STATUS)) {
+        console.error('Shader compile error:', glCtx.getShaderInfoLog(shader));
+        glCtx.deleteShader(shader);
+        return null;
+      }
+      return shader;
+    };
+
+    const vs = createShader(gl, gl.VERTEX_SHADER, VERTEX_SHADER_SOURCE);
+    const fs = createShader(gl, gl.FRAGMENT_SHADER, FRAGMENT_SHADER_SOURCE);
+    if (!vs || !fs) {
+      setWebglSupported(false);
+      return;
+    }
+
+    const program = gl.createProgram();
+    if (!program) {
+      setWebglSupported(false);
+      return;
+    }
+
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error('Program link error:', gl.getProgramInfoLog(program));
+      setWebglSupported(false);
+      return;
+    }
+
+    const positionAttributeLocation = gl.getAttribLocation(program, 'position');
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    
+    const positions = [
+      -1, -1,
+       1, -1,
+      -1,  1,
+      -1,  1,
+       1, -1,
+       1,  1,
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+    const resolutionUniformLocation = gl.getUniformLocation(program, 'u_resolution');
+    const timeUniformLocation = gl.getUniformLocation(program, 'u_time');
+    const mouseUniformLocation = gl.getUniformLocation(program, 'u_mouse');
+    const intensityUniformLocation = gl.getUniformLocation(program, 'u_intensity');
+    
+    const groundColorUniformLocation = gl.getUniformLocation(program, 'u_ground_color');
+    const accent1ColorUniformLocation = gl.getUniformLocation(program, 'u_accent1_color');
+    const accent2ColorUniformLocation = gl.getUniformLocation(program, 'u_accent2_color');
+ 
+    const resize = () => {
+      const displayWidth = window.innerWidth;
+      const displayHeight = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.floor(displayWidth * dpr);
+      const height = Math.floor(displayHeight * dpr);
+      
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+        if (gl) {
+          gl.viewport(0, 0, width, height);
+        }
+      }
+    };
+    window.addEventListener('resize', resize);
+    resize();
+
+    targetMousePosRef.current = { x: canvas.width / 2, y: canvas.height / 2 };
+    mousePosRef.current = { x: canvas.width / 2, y: canvas.height / 2 };
+
+    let animationFrameId: number;
+    const startTime = performance.now();
+
+    const render = () => {
+      if (!canvas || !gl) return;
+
+      const time = (performance.now() - startTime) * 0.001;
+      const now = performance.now();
+      
+      if (isMouseOverRef.current && now - lastMoveTimeRef.current > 1500) {
+        targetIntensityRef.current = 0.25;
+      }
+      
+      const intensitySpeed = targetIntensityRef.current > intensityRef.current ? 0.05 : 0.02;
+      intensityRef.current += (targetIntensityRef.current - intensityRef.current) * intensitySpeed;
+
+      mousePosRef.current.x += (targetMousePosRef.current.x - mousePosRef.current.x) * 0.08;
+      mousePosRef.current.y += (targetMousePosRef.current.y - mousePosRef.current.y) * 0.08;
+
+      let groundColor: [number, number, number];
+      let accent1Color: [number, number, number];
+      let accent2Color: [number, number, number];
+
+      if (theme === 'dark') {
+        // Deep crimson-charcoal base: #080203
+        groundColor = [8 / 255, 2 / 255, 3 / 255];
+        // Bright red: #EF4444
+        accent1Color = [239 / 255, 68 / 255, 68 / 255];
+        // Soft rose pink: #FCA5A5
+        accent2Color = [252 / 255, 165 / 255, 165 / 255];
+      } else {
+        // Warm pale rose base: #FFF1F2
+        groundColor = [255 / 255, 241 / 255, 242 / 255];
+        // Dark cherry red: #9F1239
+        accent1Color = [159 / 255, 18 / 255, 57 / 255];
+        // Deep rose-red: #E11D48
+        accent2Color = [225 / 255, 29 / 255, 72 / 255];
+      }
+
+      gl.clearColor(groundColor[0], groundColor[1], groundColor[2], 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.useProgram(program);
+
+      gl.enableVertexAttribArray(positionAttributeLocation);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
+
+      gl.uniform2f(resolutionUniformLocation, canvas.width, canvas.height);
+      gl.uniform1f(timeUniformLocation, time);
+      gl.uniform2f(mouseUniformLocation, mousePosRef.current.x, mousePosRef.current.y);
+      gl.uniform1f(intensityUniformLocation, intensityRef.current);
+      
+      gl.uniform3f(groundColorUniformLocation, groundColor[0], groundColor[1], groundColor[2]);
+      gl.uniform3f(accent1ColorUniformLocation, accent1Color[0], accent1Color[1], accent1Color[2]);
+      gl.uniform3f(accent2ColorUniformLocation, accent2Color[0], accent2Color[1], accent2Color[2]);
+
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      cancelAnimationFrame(animationFrameId);
+      if (gl) {
+        gl.deleteBuffer(positionBuffer);
+        gl.deleteProgram(program);
+        gl.deleteShader(vs);
+        gl.deleteShader(fs);
+      }
+    };
+  }, [prefersReducedMotion, theme]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    targetMousePosRef.current = {
+      x: (e.clientX - rect.left) * dpr,
+      y: (rect.height - (e.clientY - rect.top)) * dpr
+    };
+    isMouseOverRef.current = true;
+    targetIntensityRef.current = 1.0;
+    lastMoveTimeRef.current = performance.now();
+  };
+
+  const handleMouseEnter = () => {
+    isMouseOverRef.current = true;
+    targetIntensityRef.current = 0.5;
+  };
+
+  const handleMouseLeave = () => {
+    isMouseOverRef.current = false;
+    targetIntensityRef.current = 0.0;
+  };
+
+  const shouldRenderStaticPath = prefersReducedMotion || !webglSupported;
+
   // Sidebar states
   const [assets, setAssets] = useState<Asset[]>([]);
   const [status, setStatus] = useState<Status | null>(null);
@@ -137,6 +500,11 @@ export default function App() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
+  const chatBottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    chatBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatHistory, chatLoading]);
 
   // API Key modal states
   const [showKeysModal, setShowKeysModal] = useState(false);
@@ -471,8 +839,55 @@ export default function App() {
   };
 
   return (
-    <div className="h-screen flex bg-black overflow-hidden font-sans select-none antialiased relative">
-            {/* 1. LEFT SIDEBAR: Source files, Recall adding, and API config */}
+    <div 
+      className="h-screen flex bg-transparent overflow-hidden font-sans select-none antialiased relative"
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Background Shader Canvas / SVG Backdrop */}
+      {!shouldRenderStaticPath ? (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full block z-0 pointer-events-none"
+        />
+      ) : (
+        <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none transition-colors duration-300" style={{ backgroundColor: theme === 'dark' ? '#080203' : '#FFF1F2' }}>
+          <svg 
+            className="absolute inset-0 w-full h-full opacity-90" 
+            viewBox="0 0 1000 1000" 
+            preserveAspectRatio="xMidYMid slice"
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="1000" height="1000" fill={theme === 'dark' ? '#080203' : '#FFF1F2'}/>
+            <path d="M-100,800 C300,750 400,500 600,450 C800,400 900,200 1100,100" stroke={theme === 'dark' ? '#EF4444' : '#E11D48'} strokeWidth="20" strokeLinecap="round" opacity="0.8"/>
+            <path d="M-100,700 C280,630 380,420 580,360 C780,300 880,120 1100,-20" stroke={theme === 'dark' ? '#FCA5A5' : '#9F1239'} strokeWidth="16" strokeLinecap="round" opacity="0.9"/>
+            <path d="M-100,900 C320,870 420,580 620,540 C820,500 920,280 1100,220" stroke={theme === 'dark' ? '#EF4444' : '#E11D48'} strokeWidth="24" strokeLinecap="round" opacity="0.5"/>
+            <path d="M-100,600 C260,510 360,340 560,270 C760,200 860,40 1100,-140" stroke={theme === 'dark' ? '#EF4444' : '#E11D48'} strokeWidth="14" strokeLinecap="round" opacity="0.4"/>
+            <path d="M-100,500 C240,390 340,260 540,180 C740,100 840,-40 1100,-260" stroke={theme === 'dark' ? '#FCA5A5' : '#9F1239'} strokeWidth="12" strokeLinecap="round" opacity="0.7"/>
+          </svg>
+        </div>
+      )}
+
+      {/* Fallback Message Layer (Only visible when WebGL is unsupported and motion is NOT reduced) */}
+      {!webglSupported && !prefersReducedMotion && (
+        <div className="absolute inset-0 z-[5] flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm text-zinc-400 p-8 font-sans pointer-events-none">
+          <div className="w-16 h-16 rounded-full border border-rose-500/30 flex items-center justify-center bg-black/90 mb-4 shadow-2xl">
+            <svg className="w-6 h-6 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-sm font-semibold text-rose-500 tracking-wider mb-1" style={{ fontFamily: 'var(--font-serif-instrument, "Instrument Serif", serif)' }}>
+            Warp Stripes Fallback
+          </h1>
+          <p className="text-[10px] max-w-xs text-center leading-relaxed text-zinc-500">
+            WebGL is disabled or unsupported. Displaying static vector background.
+          </p>
+        </div>
+      )}
+
+      {/* 1. LEFT SIDEBAR: Source files, Recall adding, and API config */}
       <aside 
         style={{ width: leftWidth }} 
         className="liquid-glass border-r border-white/10 flex flex-col shrink-0 overflow-hidden z-10"
@@ -487,6 +902,13 @@ export default function App() {
             />
           </div>
           <div className="flex gap-1.5">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-lg transition-all duration-300 text-zinc-450 hover:text-white hover:bg-white/5"
+              title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-500" />}
+            </button>
             <button
               onClick={() => {
                 setShowRecallGraph(false);
@@ -834,6 +1256,7 @@ export default function App() {
               </div>
             </div>
           )}
+          <div ref={chatBottomRef} />
         </div>
 
         {/* Chat input box */}

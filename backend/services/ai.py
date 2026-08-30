@@ -1,54 +1,55 @@
 import os
 import json
 import re
-try:
-    import google.generativeai as genai
-    GEMINI_AVAILABLE = True
-except Exception as e:
-    print(f"Warning: google-generativeai could not be imported due to python/protobuf incompatibility on this version: {e}")
-    GEMINI_AVAILABLE = False
+import requests
 from anthropic import Anthropic
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Setup API keys
-GEMINI_KEY = os.environ.get("GEMINI_API_KEY") if GEMINI_AVAILABLE else None
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY")
 CLAUDE_KEY = os.environ.get("ANTHROPIC_API_KEY")
-
-if GEMINI_KEY and GEMINI_AVAILABLE:
-    try:
-        genai.configure(api_key=GEMINI_KEY)
-    except Exception as e:
-        print(f"Failed to configure Gemini: {e}")
-        GEMINI_AVAILABLE = False
-        GEMINI_KEY = None
+GEMINI_AVAILABLE = True
 
 
-# Helper function to query Gemini
+# Helper function to query Gemini via REST API (Python 3.14+ compatible, zero protobuf dependency)
 def query_gemini(prompt: str, json_mode: bool = False) -> str:
     if not GEMINI_KEY:
         raise ValueError("GEMINI_API_KEY is not set")
     
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        
-        generation_config = {}
+    models = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-pro-latest"]
+    last_error = None
+    
+    for model_name in models:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_KEY}"
+        payload = {
+            "contents": [
+                {
+                    "parts": [{"text": prompt}]
+                }
+            ]
+        }
         if json_mode:
-            # Note: gemini-1.5-flash supports response_mime_type
-            generation_config = {"response_mime_type": "application/json"}
+            payload["generationConfig"] = {
+                "responseMimeType": "application/json"
+            }
             
-        response = model.generate_content(prompt, generation_config=generation_config)
-        return response.text
-    except Exception as e:
-        print(f"Gemini call failed: {e}")
-        # Fallback to older configuration or model if needed
         try:
-            model = genai.GenerativeModel("gemini-pro")
-            response = model.generate_content(prompt)
-            return response.text
-        except Exception as ex:
-            raise Exception(f"Gemini API failure: {ex}") from e
+            res = requests.post(url, json=payload, headers={"Content-Type": "application/json"}, timeout=60)
+            if res.status_code == 200:
+                data = res.json()
+                candidates = data.get("candidates", [])
+                if candidates and "content" in candidates[0] and "parts" in candidates[0]["content"]:
+                    parts = candidates[0]["content"]["parts"]
+                    text_parts = [p.get("text", "") for p in parts]
+                    return "".join(text_parts)
+            else:
+                last_error = f"HTTP {res.status_code}: {res.text}"
+        except Exception as e:
+            last_error = str(e)
+            
+    raise Exception(f"Gemini API failure: {last_error}")
 
 # Helper function to query Claude
 def query_claude(prompt: str, system_prompt: str = "") -> str:

@@ -1,7 +1,7 @@
 import os
 from gtts import gTTS
 import uuid
-from backend.services.ai import query_gemini, GEMINI_KEY
+from backend.services import ai
 
 # Ensure static folder exists
 STATIC_AUDIO_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "static", "audio")
@@ -44,7 +44,7 @@ def generate_audio_overview(content: str, language_name: str) -> str:
     
     script_text = ""
     
-    if GEMINI_KEY:
+    if ai.GEMINI_KEY:
         try:
             # Generate script using Gemini in the target language
             prompt = f"""You are a friendly podcast host and educational tutor. Write a short, engaging 1-minute audio explanation script in the language matching code '{lang_code}' explaining the following text. 
@@ -53,7 +53,7 @@ def generate_audio_overview(content: str, language_name: str) -> str:
             Text:
             {content[:6000]}"""
             
-            script_text = query_gemini(prompt).strip()
+            script_text = ai.query_gemini(prompt).strip()
             # Clean up markdown formatting if the model output them
             script_text = script_text.replace("**", "").replace("*", "").replace("#", "")
         except Exception as e:

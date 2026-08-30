@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Play, Pause, ChevronLeft, Disc, AlertCircle } from 'lucide-react';
 
 interface AudioOverviewProps {
@@ -48,7 +48,7 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
   const togglePlay = () => {
     if (!audioRef.current) return;
     
-    if (playing) {
+    if (!audioRef.current.paused) {
       audioRef.current.pause();
       setPlaying(false);
     } else {
@@ -136,17 +136,30 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
             src={audioUrl || ''}
             onTimeUpdate={handleTimeUpdate}
             onLoadedMetadata={handleLoadedMetadata}
+            onPlay={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
             onEnded={() => setPlaying(false)}
           />
 
           {/* Glowing Red Jelly Player stage */}
-          <div className="relative w-44 h-44 bg-gradient-to-br from-rose-500 to-red-650 rounded-3xl flex items-center justify-center group overflow-hidden shadow-[0_0_25px_rgba(244,63,94,0.3)] animate-float">
+          <div 
+            className="relative w-44 h-44 bg-gradient-to-br from-rose-500 to-red-650 rounded-3xl flex items-center justify-center group overflow-hidden shadow-[0_0_25px_rgba(244,63,94,0.3)] animate-float cursor-pointer select-none"
+            onClick={togglePlay}
+          >
             {playing && (
-              <div className="absolute inset-0 bg-white/5 animate-pulse"></div>
+              <div className="absolute inset-0 bg-white/5 animate-pulse pointer-events-none"></div>
             )}
-            <div className="w-20 h-20 bg-white hover:bg-zinc-200 active:scale-95 text-black rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 shadow-lg hover:shadow-white/10" onClick={togglePlay}>
+            <button
+              type="button"
+              className="relative z-10 w-20 h-20 bg-white hover:bg-zinc-200 active:scale-95 text-black rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 shadow-lg hover:shadow-white/10"
+              onClick={(e) => {
+                e.stopPropagation();
+                togglePlay();
+              }}
+              aria-label={playing ? "Pause audio" : "Play audio"}
+            >
               {playing ? <Pause className="w-8 h-8 fill-black text-black" /> : <Play className="w-8 h-8 fill-black text-black ml-1" />}
-            </div>
+            </button>
           </div>
 
           <div className="w-full flex flex-col gap-2">

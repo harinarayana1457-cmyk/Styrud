@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PlaySquare, ChevronLeft, Play, Pause, AlertCircle, Volume2, RotateCcw } from 'lucide-react';
 
 interface Slide {
@@ -74,7 +74,7 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-    if (playing) {
+    if (!audioRef.current.paused) {
       audioRef.current.pause();
       setPlaying(false);
     } else {
@@ -144,6 +144,8 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
             src={audioUrl || ''}
             onTimeUpdate={handleTimeUpdate}
             onLoadedMetadata={handleLoadedMetadata}
+            onPlay={() => setPlaying(true)}
+            onPause={() => setPlaying(false)}
             onEnded={() => setPlaying(false)}
           />
 

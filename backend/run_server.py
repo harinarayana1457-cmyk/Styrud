@@ -16,4 +16,5 @@ if __name__ == "__main__":
         loop="asyncio"
     )
     server = uvicorn.Server(config)
+    server.install_signal_handlers = lambda: None
     server.run()

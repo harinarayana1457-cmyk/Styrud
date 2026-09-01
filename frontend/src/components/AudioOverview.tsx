@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Volume2, Play, Pause, ChevronLeft, Disc, AlertCircle } from 'lucide-react';
+import { Volume2, Play, Pause, ChevronLeft, Disc, AlertCircle, Sparkles } from 'lucide-react';
+import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
 interface AudioOverviewProps {
   language: string;
@@ -63,7 +64,10 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
 
   const handleTimeUpdate = () => {
     if (!audioRef.current) return;
-    setProgress(audioRef.current.currentTime);
+    const curr = audioRef.current.currentTime;
+    const dur = audioRef.current.duration;
+    setProgress(curr);
+    setDuration(dur || 0);
   };
 
   const handleLoadedMetadata = () => {
@@ -72,10 +76,11 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
   };
 
   const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!audioRef.current) return;
-    const newTime = parseFloat(e.target.value);
-    audioRef.current.currentTime = newTime;
-    setProgress(newTime);
+    const val = parseFloat(e.target.value);
+    if (audioRef.current) {
+      audioRef.current.currentTime = val;
+      setProgress(val);
+    }
   };
 
   useEffect(() => {
@@ -95,13 +100,24 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
 
   return (
     <div className="flex flex-col gap-6 max-w-xl mx-auto w-full bg-styrud-panel border border-white/[0.06] rounded-3xl p-6 shadow-xl">
-      <button 
-        onClick={onBack}
-        className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-550 hover:text-white transition duration-300 w-fit"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        Back to Styrud
-      </button>
+      <div className="flex items-center justify-between">
+        <button 
+          onClick={onBack}
+          className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-550 hover:text-white transition duration-300 w-fit"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Back to Styrud
+        </button>
+
+        <button
+          onClick={() => exportAndLaunchNotebookLM('audio', assetId)}
+          title="Download sources and generate in Google NotebookLM"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-white rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <span>Open in NotebookLM ↗</span>
+        </button>
+      </div>
 
       <div className="flex items-center gap-3 border-b border-white/[0.06] pb-4">
         <Volume2 className="w-5 h-5 text-rose-450" />

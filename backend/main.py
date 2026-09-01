@@ -211,6 +211,35 @@ def get_assets():
         for a in db["assets"]
     ]
 
+@app.get("/api/export-sources")
+def export_sources(asset_id: Optional[str] = None):
+    db = load_db()
+    if not db["assets"]:
+        raise HTTPException(status_code=400, detail="No assets in workspace")
+    
+    if asset_id:
+        selected = [a for a in db["assets"] if a["id"] == asset_id]
+        if not selected:
+            raise HTTPException(status_code=404, detail="Asset not found")
+        assets = selected
+    else:
+        assets = db["assets"]
+        
+    combined_text = ""
+    for a in assets:
+        combined_text += f"========================================\n"
+        combined_text += f"SOURCE: {a['title']}\n"
+        combined_text += f"TYPE: {a['type']} | DATE: {a['created_at']}\n"
+        combined_text += f"========================================\n\n"
+        combined_text += a['content'] + "\n\n\n"
+        
+    return {
+        "filename": "Styrud_NotebookLM_Sources.txt",
+        "content": combined_text.strip(),
+        "assets_count": len(assets),
+        "notebooklm_url": "https://notebooklm.google.com"
+    }
+
 @app.post("/api/upload")
 def upload_file(file: UploadFile = File(...)):
     db = load_db()

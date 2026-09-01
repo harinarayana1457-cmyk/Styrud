@@ -23,6 +23,7 @@
 
 ## 🌟 Highlights & What Makes Styrud Better
 
+* **🪐 Seamless Google NotebookLM Bridge**: Instantly package workspace sources, download prepared files, copy specialized task prompts to clipboard, and launch official Google NotebookLM with 1 click.
 * **🧠 Grounded Source Reasoning with Citations**: Multi-turn reasoning chat assistant grounded strictly in your uploaded materials with pinpoint slide and section citations.
 * **🌌 Recall 2D Semantic Knowledge Galaxy**: Pure Python TF-IDF vectorization & K-Means clustering that automatically decomposes complex documents into interconnected concept nodes with spring physics.
 * **🎙️ Multi-Lingual Audio Briefings**: Generates podcast audio overviews in **English + 9 Indian Regional Languages** (Hindi, Telugu, Tamil, Kannada, Marathi, Gujarati, Bengali, Malayalam, Punjabi) with in-browser audio streaming.

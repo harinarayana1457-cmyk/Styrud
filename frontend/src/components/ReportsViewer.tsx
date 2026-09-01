@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
-import { FileText, ChevronLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { FileText, ChevronLeft, Sparkles } from 'lucide-react';
+import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
 interface ReportsViewerProps {
   assetId: string | null;
@@ -83,13 +84,24 @@ export default function ReportsViewer({ assetId, onBack }: ReportsViewerProps) {
 
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto w-full py-2">
-      <button 
-        onClick={onBack}
-        className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        Back to Styrud
-      </button>
+      <div className="flex items-center justify-between">
+        <button 
+          onClick={onBack}
+          className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Back to Styrud
+        </button>
+
+        <button
+          onClick={() => exportAndLaunchNotebookLM('reports', assetId)}
+          title="Download sources and generate in Google NotebookLM"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-white rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <span>Open in NotebookLM ↗</span>
+        </button>
+      </div>
 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
         <div className="flex items-center gap-2">

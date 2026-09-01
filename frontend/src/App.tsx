@@ -21,7 +21,8 @@ import {
   Key,
   X,
   Sun,
-  Moon
+  Moon,
+  Sparkles
 } from 'lucide-react';
 
 // View components
@@ -37,6 +38,8 @@ import QuizViewer from './components/QuizViewer';
 import InfographicViewer from './components/InfographicViewer';
 import DataTableViewer from './components/DataTableViewer';
 import MagnificationDock from './components/MagnificationDock';
+import NotebookLMModal from './components/NotebookLMModal';
+import { NOTEBOOKLM_TASKS, triggerFileDownload, copyToClipboard } from './utils/notebooklmBridge';
 
 // Helper component to filter out dark background textures from logo images programmatically
 function TransparentLogo({ src, alt, className }: { src: string; alt: string; className?: string }) {
@@ -511,6 +514,55 @@ export default function App() {
   const [geminiKeyInput, setGeminiKeyInput] = useState('');
   const [claudeKeyInput, setClaudeKeyInput] = useState('');
 
+  // NotebookLM Bridge modal states
+  const [notebookModalOpen, setNotebookModalOpen] = useState(false);
+  const [notebookModalData, setNotebookModalData] = useState<{
+    toolTitle: string;
+    prompt: string;
+    filename: string;
+    assetsCount: number;
+    fileContent?: string;
+  }>({
+    toolTitle: 'Study Materials',
+    prompt: '',
+    filename: 'Styrud_NotebookLM_Sources.txt',
+    assetsCount: 0
+  });
+
+  const handleLaunchNotebookLM = async (toolId: string = 'reports') => {
+    try {
+      const url = selectedAssetId ? `/api/export-sources?asset_id=${selectedAssetId}` : '/api/export-sources';
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("No sources found to export. Please add study files or links first.");
+      const data = await res.json();
+      
+      const taskInfo = NOTEBOOKLM_TASKS[toolId] || NOTEBOOKLM_TASKS.reports;
+      const filename = data.filename || 'Styrud_NotebookLM_Sources.txt';
+      
+      // 1. Trigger source file download
+      triggerFileDownload(filename, data.content);
+      
+      // 2. Copy specialized prompt to clipboard
+      await copyToClipboard(taskInfo.prompt);
+      
+      // 3. Open Google NotebookLM in new tab
+      window.open('https://notebooklm.google.com', '_blank');
+      
+      // 4. Open modal guide
+      setNotebookModalData({
+        toolTitle: taskInfo.title,
+        prompt: taskInfo.prompt,
+        filename: filename,
+        assetsCount: data.assets_count,
+        fileContent: data.content
+      });
+      setNotebookModalOpen(true);
+    } catch (err: any) {
+      console.error("NotebookLM launch error:", err);
+      alert(err.message || "Failed to launch Google NotebookLM bridge.");
+    }
+  };
+
   // Load backend status and assets list
   const fetchStatusAndAssets = async () => {
     try {
@@ -802,6 +854,14 @@ export default function App() {
         setActiveTool('datatable');
       },
       className: 'bg-gradient-to-br from-teal-400 to-green-600 shadow-[0_0_15px_rgba(20,184,166,0.25)]'
+    },
+    {
+      icon: <Sparkles size={20} className="animate-pulse text-purple-200" />,
+      label: 'NotebookLM ↗',
+      onClick: () => {
+        handleLaunchNotebookLM(activeTool || 'reports');
+      },
+      className: 'bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 shadow-[0_0_20px_rgba(168,85,247,0.4)] text-white'
     }
   ];
 
@@ -1091,7 +1151,7 @@ export default function App() {
       <main className="flex-1 flex flex-col overflow-hidden bg-transparent p-6 md:p-8 relative z-10">
         
         {/* Main Stage Top Navigation context bar with Lime curves outline */}
-        <div className="mb-6 flex justify-between items-center text-xs text-zinc-400 liquid-glass rounded-2xl px-5 py-3.5 shadow-sm transition duration-300">
+        <div className="mb-6 flex flex-wrap justify-between items-center text-xs text-zinc-400 liquid-glass rounded-2xl px-5 py-3.5 shadow-sm transition duration-300 gap-3">
           <div className="flex items-center gap-2 font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-lime-400 animate-ping"></span>
             <span className="text-zinc-550 text-[11px] uppercase tracking-wider">FOCUS:</span>
@@ -1101,11 +1161,24 @@ export default function App() {
                 : 'All Combined Sources'}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-zinc-550">
-            <span className="text-[11px] uppercase tracking-wider">LAYOUT: </span>
-            <span className="text-white font-bold capitalize text-shadow-observe">
-              {showRecallGraph ? 'Recall Graph' : activeTool || 'Styrud Grid'}
-            </span>
+
+          <div className="flex items-center gap-3">
+            {/* Quick Export to Google NotebookLM Button */}
+            <button
+              onClick={() => handleLaunchNotebookLM(activeTool || 'reports')}
+              title="Download packaged sources and open in Google NotebookLM"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-purple-600/30 to-indigo-600/30 hover:from-purple-600/50 hover:to-indigo-600/50 border border-purple-500/40 text-purple-200 hover:text-white rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 active:scale-95 shadow-md"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
+              <span>Open in NotebookLM ↗</span>
+            </button>
+
+            <div className="flex items-center gap-1.5 text-zinc-550 pl-2 border-l border-white/10">
+              <span className="text-[11px] uppercase tracking-wider">LAYOUT: </span>
+              <span className="text-white font-bold capitalize text-shadow-observe">
+                {showRecallGraph ? 'Recall Graph' : activeTool || 'Styrud Grid'}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -1171,6 +1244,7 @@ export default function App() {
                 setActiveTool(tool);
                 if (params) setExtraParams(params);
               }}
+              onLaunchNotebookLM={handleLaunchNotebookLM}
             />
           )}
         </div>
@@ -1364,6 +1438,17 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Google NotebookLM Export & Launch Modal */}
+      <NotebookLMModal 
+        isOpen={notebookModalOpen}
+        onClose={() => setNotebookModalOpen(false)}
+        toolTitle={notebookModalData.toolTitle}
+        prompt={notebookModalData.prompt}
+        filename={notebookModalData.filename}
+        assetsCount={notebookModalData.assetsCount}
+        fileContent={notebookModalData.fileContent}
+      />
 
     </div>
   );

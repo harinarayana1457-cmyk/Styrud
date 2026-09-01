@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
-import { Presentation, ChevronLeft, ChevronRight, Eye } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Presentation, ChevronLeft, ChevronRight, Eye, Sparkles } from 'lucide-react';
+import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
 interface Slide {
   title: string;
@@ -52,20 +53,31 @@ export default function SlideDeckViewer({ assetId, onBack }: SlideDeckViewerProp
 
   return (
     <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full py-2">
-      <button 
-        onClick={onBack}
-        className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        Back to Styrud
-      </button>
+      <div className="flex items-center justify-between">
+        <button 
+          onClick={onBack}
+          className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Back to Styrud
+        </button>
+
+        <button
+          onClick={() => exportAndLaunchNotebookLM('slides', assetId)}
+          title="Download sources and generate in Google NotebookLM"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-white rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <span>Open in NotebookLM ↗</span>
+        </button>
+      </div>
 
       <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
         <div className="flex items-center gap-2">
-          <Presentation className="w-5 h-5 text-amber-400" />
+          <Presentation className="w-5 h-5 text-amber-400 animate-bounce" />
           <div>
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider">Slide Deck Viewer</h2>
-            <p className="text-[10px] text-zinc-500 mt-0.5 font-semibold">Geometric visual outline cards</p>
+            <h2 className="text-sm font-bold text-white uppercase tracking-wider">Slide Deck Presentation</h2>
+            <p className="text-[10px] text-zinc-500 mt-0.5 font-semibold">Geometric slide outline visuals</p>
           </div>
         </div>
         <div className="text-[10px] text-zinc-500 font-mono">

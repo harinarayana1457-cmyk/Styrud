@@ -15,10 +15,12 @@ import {
 
 interface StyrudDashboardProps {
   onSelectTool: (tool: string, extra?: any) => void;
+  onLaunchNotebookLM?: (tool: string) => void;
 }
 
-export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) {
+export default function StyrudDashboard({ onSelectTool, onLaunchNotebookLM }: StyrudDashboardProps) {
   const [selectedLanguage, setSelectedLanguage] = useState('english');
+  const [notebookLMMode, setNotebookLMMode] = useState(false);
 
   const languages = [
     { name: 'English', native: 'English', id: 'english' },
@@ -126,16 +128,51 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
     }
   ];
 
+  const handleCardClick = (toolId: string, params?: any) => {
+    if (notebookLMMode && onLaunchNotebookLM) {
+      onLaunchNotebookLM(toolId);
+    } else {
+      onSelectTool(toolId, params);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-8 max-w-5xl mx-auto w-full py-4">
       
-      {/* Dynamic Animated Header */}
-      <div className="flex items-center justify-between border-b border-white/[0.06] pb-5">
+      {/* Dynamic Animated Header with NotebookLM Mode Toggle */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-white/[0.06] pb-5 gap-4">
         <div>
           <h2 className="text-lg tracking-wider flex items-center gap-2 font-sans font-bold uppercase text-white text-shadow-observe">
             Motion Styrud Hub
           </h2>
-          <p className="text-xs text-zinc-400 mt-1 text-shadow-observe">Experience animated interactive learning dashboards built directly from your notes.</p>
+          <p className="text-xs text-zinc-400 mt-1 text-shadow-observe">
+            Experience animated interactive study visualizers or bridge directly into Google NotebookLM.
+          </p>
+        </div>
+
+        {/* NotebookLM Mode Toggle */}
+        <div className="flex items-center gap-3 bg-black/40 border border-purple-500/30 rounded-2xl px-4 py-2 shadow-lg shadow-purple-500/10">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3 text-purple-400 animate-pulse" />
+              NotebookLM Direct Mode
+            </span>
+            <span className="text-[9px] text-zinc-400">
+              {notebookLMMode ? 'Clicking cards launches NotebookLM' : 'Clicking cards opens in Styrud'}
+            </span>
+          </div>
+          <button
+            onClick={() => setNotebookLMMode(!notebookLMMode)}
+            className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors duration-300 ${
+              notebookLMMode ? 'bg-purple-600' : 'bg-zinc-700'
+            }`}
+          >
+            <div
+              className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+                notebookLMMode ? 'translate-x-5' : 'translate-x-0'
+              }`}
+            />
+          </button>
         </div>
       </div>
 
@@ -165,13 +202,27 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
             ))}
           </div>
         </div>
-        <button
-          onClick={() => onSelectTool('audio', { language: selectedLanguage })}
-          className="shrink-0 px-6 py-3 bg-white hover:bg-zinc-200 active:scale-95 text-black rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-1 shadow-lg hover:shadow-white/10"
-        >
-          Generate Audio
-          <ChevronRight className="w-4 h-4" />
-        </button>
+
+        <div className="flex flex-col sm:flex-row items-center gap-2.5">
+          <button
+            onClick={() => handleCardClick('audio', { language: selectedLanguage })}
+            className="w-full sm:w-auto shrink-0 px-6 py-3 bg-white hover:bg-zinc-200 active:scale-95 text-black rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-1 shadow-lg hover:shadow-white/10"
+          >
+            {notebookLMMode ? 'Open in NotebookLM' : 'Generate Audio'}
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {onLaunchNotebookLM && !notebookLMMode && (
+            <button
+              onClick={() => onLaunchNotebookLM('audio')}
+              title="Export sources and launch Google NotebookLM Audio Overview"
+              className="w-full sm:w-auto shrink-0 px-4 py-3 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/40 active:scale-95 text-purple-300 hover:text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <span>NotebookLM</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Playful Floating Tools Grid */}
@@ -181,8 +232,8 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
           return (
             <div
               key={t.id}
-              onClick={() => onSelectTool(t.id, t.id === 'audio' ? { language: selectedLanguage } : undefined)}
-              className={`relative overflow-hidden p-5 liquid-glass rounded-3xl cursor-pointer border border-white/10 hover:border-white/20 hover:-translate-y-1.5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-40 shadow-lg ${t.shadow} group`}
+              onClick={() => handleCardClick(t.id, t.id === 'audio' ? { language: selectedLanguage } : undefined)}
+              className={`relative overflow-hidden p-5 liquid-glass rounded-3xl cursor-pointer border border-white/10 hover:border-white/20 hover:-translate-y-1.5 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 flex flex-col justify-between h-44 shadow-lg ${t.shadow} group`}
             >
               {/* Background large rotated watermark icon */}
               <div className={`absolute right-[-12px] bottom-[-12px] opacity-[0.03] group-hover:opacity-10 ${t.textColor} pointer-events-none group-hover:rotate-12 group-hover:scale-125 transition-all duration-500`}>
@@ -196,16 +247,27 @@ export default function StyrudDashboard({ onSelectTool }: StyrudDashboardProps) 
                   {`0${idx + 1} / MODEL`}
                 </span>
                 
-                {/* Beta tag or standard badge */}
-                {t.beta ? (
-                  <span className={`text-[7px] bg-white/5 border ${t.borderColor} px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono ${t.textColor}`}>
-                    Beta
-                  </span>
-                ) : (
-                  <span className="text-[7px] bg-white/5 border border-white/10 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Open →
-                  </span>
-                )}
+                {/* NotebookLM Badge & Quick Launch */}
+                <div className="flex items-center gap-1.5">
+                  {onLaunchNotebookLM && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLaunchNotebookLM(t.id);
+                      }}
+                      title={`Launch ${t.title} directly in Google NotebookLM`}
+                      className="px-2 py-0.5 rounded-full bg-purple-500/15 hover:bg-purple-500/30 border border-purple-500/30 text-[8px] font-mono font-bold uppercase tracking-wider text-purple-300 hover:text-white transition flex items-center gap-1"
+                    >
+                      <Sparkles className="w-2.5 h-2.5 text-purple-400" />
+                      <span>NotebookLM ↗</span>
+                    </button>
+                  )}
+                  {t.beta && (
+                    <span className={`text-[7px] bg-white/5 border ${t.borderColor} px-2 py-0.5 rounded-full font-bold uppercase tracking-widest font-mono ${t.textColor}`}>
+                      Beta
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Card Bottom Content */}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PlaySquare, ChevronLeft, Play, Pause, AlertCircle, Volume2, RotateCcw } from 'lucide-react';
+import { PlaySquare, ChevronLeft, Play, Pause, AlertCircle, Volume2, RotateCcw, Sparkles } from 'lucide-react';
+import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
 interface Slide {
   title: string;
@@ -60,10 +61,13 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
     
     setProgress(current);
     
-    const slideDuration = total / slides.length;
-    const index = Math.floor(current / slideDuration);
-    if (index >= 0 && index < slides.length) {
-      setCurrentSlide(index);
+    // Automatically switch slide based on audio fraction
+    if (total > 0) {
+      const slideIndex = Math.min(
+        Math.floor((current / total) * slides.length),
+        slides.length - 1
+      );
+      setCurrentSlide(slideIndex);
     }
   };
 
@@ -108,13 +112,24 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
 
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto w-full py-2">
-      <button 
-        onClick={onBack}
-        className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        Back to Styrud
-      </button>
+      <div className="flex items-center justify-between">
+        <button 
+          onClick={onBack}
+          className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-555 hover:text-white transition duration-300 w-fit"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Back to Styrud
+        </button>
+
+        <button
+          onClick={() => exportAndLaunchNotebookLM('video', assetId)}
+          title="Download sources and generate in Google NotebookLM"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 text-purple-300 hover:text-white rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 shadow-sm"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <span>Open in NotebookLM ↗</span>
+        </button>
+      </div>
 
       <div className="flex items-center gap-2 border-b border-white/[0.06] pb-4">
         <PlaySquare className="w-5 h-5 text-fuchsia-450" />

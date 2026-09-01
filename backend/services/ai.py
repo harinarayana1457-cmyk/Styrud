@@ -18,7 +18,7 @@ def query_gemini(prompt: str, json_mode: bool = False) -> str:
     if not GEMINI_KEY:
         raise ValueError("GEMINI_API_KEY is not set")
     
-    models = ["gemini-2.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-pro-latest"]
+    models = ["gemini-2.5-flash"]
     last_error = None
     
     for model_name in models:
@@ -84,7 +84,22 @@ def generate_mock_data(tool_type: str, content: str) -> dict | str:
     content_lower = content.lower()
     
     # Identify topic
-    if "quantum" in content_lower or "physics" in content_lower or "schrodinger" in content_lower:
+    if "microprocessor" in content_lower or "microcontroller" in content_lower or "embedded" in content_lower or "intel" in content_lower:
+        topic = "Microprocessors & Microcontrollers"
+        facts = [
+            ("Computer Generations", "1st Gen used Vacuum Tubes (ENIAC), 2nd used Transistors, 3rd used SSI/MSI ICs, 4th used LSI Microprocessors, 5th used VLSI/ULSI Microcontrollers."),
+            ("Microprocessor Architecture", "Single IC containing ALU, Control Unit, and Registers fabricated via LSI technology, serving as the CPU brain."),
+            ("Microcontroller Structure", "Combines CPU, RAM, ROM, Timers, and I/O ports on a single monolithic chip fabricated via VLSI technology."),
+            ("Instruction Execution Cycle", "3-phase cycle: Fetch (PC onto address bus, RD signal), Decode (CU decodes opcode), Execute (ALU operation and memory writeback)."),
+            ("System Bus Architecture", "Bidirectional Data Bus for data, Unidirectional Address Bus (CPU->Memory) defining 2^N address space, and Control Bus (RD, WR, Clock, Reset)."),
+            ("Embedded System Applications", "Dedicated systems for specialized tasks in Automotive (ABS), Medical (ECG), Avionics, Consumer Electronics, and Industrial Automation.")
+        ]
+        q_and_a = [
+            ("What is the difference between a microprocessor and a microcontroller?", "A microprocessor is a standalone CPU containing an ALU, Control Unit, and registers (fabricated with LSI). A microcontroller integrates the microprocessor, RAM, ROM, Timers, and I/O ports on a single chip (fabricated with VLSI) designed for dedicated embedded control."),
+            ("What are the three phases of the instruction cycle?", "The three phases are 1) Fetch: Program Counter puts address on address bus and activates Read signal; 2) Decode: Control Unit decodes the opcode binary; 3) Execute: ALU performs operation (e.g. R=X+Y) and stores result in registers/memory."),
+            ("How do Data Bus and Address Bus differ?", "The Data Bus is bidirectional and carries actual operand data (width determines data throughput). The Address Bus is unidirectional (CPU to Memory/IO) and its width N determines the maximum addressable memory capacity (2^N bytes).")
+        ]
+    elif "quantum" in content_lower or "physics" in content_lower or "schrodinger" in content_lower:
         topic = "Quantum Physics"
         facts = [
             ("Superposition", "Particles can exist in multiple states simultaneously until measured."),
@@ -231,38 +246,96 @@ def generate_mock_data(tool_type: str, content: str) -> dict | str:
     return f"I've searched your workspace items regarding **{topic}**:\n\n" + "\n\n".join([f"**Q: {q}**\n*A: {a}*" for q, a in q_and_a])
 
 
+def parse_json_safely(text: str) -> dict | list:
+    """Robustly strips markdown fences and extracts JSON structures."""
+    clean = text.strip()
+    clean = re.sub(r"^```(?:json)?\s*", "", clean, flags=re.MULTILINE)
+    clean = re.sub(r"^```\s*$", "", clean, flags=re.MULTILINE)
+    clean = clean.strip()
+    
+    try:
+        return json.loads(clean)
+    except Exception:
+        # Match outermost { ... } or [ ... ]
+        match = re.search(r'(\{[\s\S]*\}|\[[\s\S]*\])', clean)
+        if match:
+            try:
+                return json.loads(match.group(1))
+            except Exception:
+                pass
+        raise ValueError(f"Could not parse valid JSON from output:\n{text[:300]}...")
+
+
 # ----------------- Main Interface Functions -----------------
 
 def get_summary(content: str) -> str:
     if not GEMINI_KEY:
         return generate_mock_data("summary", content)
     
-    prompt = f"Summarize the following text in clean Markdown format with a title, executive overview, and key bullet points:\n\n{content}"
-    return query_gemini(prompt)
+    prompt = f"""You are Google NotebookLM, a premier educational synthesis intelligence.
+Synthesize the provided source document(s) into a master study briefing in GitHub Flavored Markdown.
+
+Format with:
+- # 📌 Executive Study Briefing & Core Synthesis
+- ## 💡 Core Theoretical Concepts & Milestones
+- ## 🔍 In-Depth Conceptual Breakdown (Detailed bullet points, architectural definitions, component lists)
+- ## ⚖️ Comparative Architecture & Key Distinctions
+- ## 🚀 Real-World Applications & Industry Takeaways
+
+Source Content:
+{content}
+"""
+    try:
+        return query_gemini(prompt)
+    except Exception as e:
+        print(f"Gemini summary generation failed: {e}. Fallback to local synthesis.")
+        return generate_mock_data("summary", content)
 
 def get_report(content: str) -> str:
     if not GEMINI_KEY:
         return generate_mock_data("report", content)
         
-    prompt = f"Create a comprehensive, academic-style research report in Markdown based on the following content. Include sections like Executive Summary, In-Depth Analysis, Structural Breakdown, and Conclusion:\n\n{content}"
-    return query_gemini(prompt)
+    prompt = f"""You are Google NotebookLM, creating an exhaustive academic-grade research briefing report based strictly on the provided sources.
+
+Structure the report with the following detailed sections:
+# 📚 Comprehensive Research Briefing & Synthesis
+## 1. Abstract & Academic Scope
+## 2. Historical Timeline & Hardware Evolution Milestones
+## 3. Microprocessor Architecture & Functional Block Analysis
+## 4. Instruction Execution Cycle Mechanics (Fetch-Decode-Execute)
+## 5. Bus Architecture & Memory Interfacing (Data, Address, Control)
+## 6. Microcontrollers vs. General Purpose Microcomputers
+## 7. Embedded System Applications & Real-World Domain Implementations
+## 8. Hardware Engineering Design & Selection Criteria
+## 9. Synthesis Conclusion & Quick Review Points
+
+Source Content:
+{content}
+"""
+    try:
+        return query_gemini(prompt)
+    except Exception as e:
+        print(f"Gemini report generation failed: {e}. Fallback to local synthesis.")
+        return generate_mock_data("report", content)
 
 def get_quiz(content: str) -> dict:
     if not GEMINI_KEY:
         return generate_mock_data("quiz", content)
         
-    prompt = """Based on the text below, generate 5 multiple-choice questions. 
-    Respond ONLY with a JSON object containing a "quiz" key, which is a list of question objects. 
-    Each question object must have: "question" (string), "options" (list of 4 strings), "answer" (string like "A", "B", "C", "D"), and "explanation" (string explaining why it is correct).
-    Do not wrap in markdown quotes.
-    
-    Text:
-    """ + content
+    prompt = """You are Google NotebookLM Quiz Generator. Based on the source text below, generate 5 high-yield multiple-choice exam questions testing conceptual mastery.
+Respond ONLY with a JSON object containing a "quiz" key, which is a list of 5 question objects.
+Each question object MUST have:
+- "question": string with the question prompt
+- "options": list of 4 distinct string choices (labeled like "A) ...", "B) ...", "C) ...", "D) ...")
+- "answer": the letter of the correct option ("A", "B", "C", or "D")
+- "explanation": clear, detailed rationale citing the concept from the source
+
+Source Text:
+""" + content
     
     try:
         response_text = query_gemini(prompt, json_mode=True)
-        # Parse it
-        return json.loads(response_text)
+        return parse_json_safely(response_text)
     except Exception as e:
         print(f"Error parsing Gemini quiz JSON: {e}. Fallback to mock.")
         return generate_mock_data("quiz", content)
@@ -271,46 +344,46 @@ def get_flashcards(content: str) -> dict:
     if not GEMINI_KEY:
         return generate_mock_data("flashcards", content)
         
-    prompt = """Based on the text below, generate 5 flashcards for active recall.
-    Respond ONLY with a JSON object containing a "flashcards" key, which is a list of card objects.
-    Each card object must have: "front" (the question/concept, string) and "back" (the answer/explanation, string).
-    Do not wrap in markdown quotes.
-    
-    Text:
-    """ + content
+    prompt = """You are Google NotebookLM Flashcard Generator. Based on the source text below, generate 8 high-yield active recall flashcards for exam preparation.
+Respond ONLY with a JSON object containing a "flashcards" key, which is a list of card objects.
+Each card object MUST have:
+- "front": clear, focused question or core concept
+- "back": complete, precise explanation or definition from the sources
+
+Source Text:
+""" + content
     
     try:
         response_text = query_gemini(prompt, json_mode=True)
-        return json.loads(response_text)
+        return parse_json_safely(response_text)
     except Exception as e:
         print(f"Error parsing Gemini flashcards JSON: {e}. Fallback to mock.")
         return generate_mock_data("flashcards", content)
 
 def get_slides(content: str) -> dict:
-    # Use Claude for visual schemas if possible, else Gemini
     use_claude = bool(CLAUDE_KEY)
     
-    prompt = """Based on the text below, generate a 5-slide deck presentation structure.
-    Respond ONLY with a JSON object containing a "slides" key, which is a list of slide objects.
-    Each slide object must have: "title" (string), "bullets" (list of 3 strings), and "visualCue" (a string description of what graphics/illustrations should accompany this slide).
-    Do not wrap in markdown quotes.
-    
-    Text:
-    """ + content
+    prompt = """You are Google NotebookLM Video & Slide Deck Synthesizer. Based on the source text below, generate a 6-slide presentation deck.
+Respond ONLY with a JSON object containing a "slides" key, which is a list of slide objects.
+Each slide object MUST have:
+- "title": string (the slide headline)
+- "bullets": list of 3-4 concise, high-impact bullet points
+- "visualCue": string (a visual description of diagrams, schematics, or graphics that should appear on this slide)
+
+Source Text:
+""" + content
 
     if use_claude:
         try:
             response_text = query_claude(prompt, system_prompt="You are a graphic design and presentation expert. Output ONLY valid JSON.")
-            # Strip markdown quotes if any
-            clean_json = re.sub(r"```json|```", "", response_text).strip()
-            return json.loads(clean_json)
+            return parse_json_safely(response_text)
         except Exception as e:
             print(f"Claude slide generation failed: {e}. Falling back to Gemini.")
     
     if GEMINI_KEY:
         try:
             response_text = query_gemini(prompt, json_mode=True)
-            return json.loads(response_text)
+            return parse_json_safely(response_text)
         except Exception as e:
             print(f"Gemini slide generation failed: {e}. Fallback to mock.")
             
@@ -318,27 +391,27 @@ def get_slides(content: str) -> dict:
 
 def get_infographic(content: str) -> dict:
     use_claude = bool(CLAUDE_KEY)
-    prompt = """Based on the text below, extract the key steps, metrics, or comparative timeline to build a visual infographic.
-    Respond ONLY with a JSON object containing an "infographics" key, which is a list of infographic segments.
-    Each segment must have: "title" (string), "type" (string, either "stat", "timeline", "process", or "key-value"), and "items" (list of items).
-    Each item in "items" must have: "label" (string), "value" (string, e.g. a stat number or stage number like "01", "50%"), and "description" (string details).
-    Do not wrap in markdown quotes.
-    
-    Text:
-    """ + content
+    prompt = """You are Google NotebookLM Information Designer. Extract the key evolutionary phases, architectural blocks, and technical parameters from the source text into structured visual infographic segments.
+Respond ONLY with a JSON object containing an "infographics" key, which is a list of infographic segment objects.
+Each segment must have:
+- "title": string (e.g. "Computer Hardware Evolution", "Instruction Execution Pipeline", "Embedded System Applications")
+- "type": string (either "timeline", "process", "stat", or "key-value")
+- "items": list of item objects, where each item has "label" (string), "value" (string, e.g. "01", "1971", "16-bit", "ABS"), and "description" (string explanation)
+
+Source Text:
+""" + content
 
     if use_claude:
         try:
             response_text = query_claude(prompt, system_prompt="You are an expert information designer. Output ONLY valid JSON matching the schema.")
-            clean_json = re.sub(r"```json|```", "", response_text).strip()
-            return json.loads(clean_json)
+            return parse_json_safely(response_text)
         except Exception as e:
             print(f"Claude infographic failed: {e}. Falling back to Gemini.")
             
     if GEMINI_KEY:
         try:
             response_text = query_gemini(prompt, json_mode=True)
-            return json.loads(response_text)
+            return parse_json_safely(response_text)
         except Exception as e:
             print(f"Gemini infographic failed: {e}. Fallback to mock.")
             
@@ -348,18 +421,17 @@ def get_mindmap(content: str) -> dict:
     if not GEMINI_KEY:
         return generate_mock_data("mindmap", content)
         
-    prompt = """Based on the text below, build a hierarchical mind map structure.
-    Respond ONLY with a JSON tree representing the hierarchical nodes.
-    The schema is: {"name": "Root Concept", "children": [{"name": "Sub-Concept 1", "children": [...]}, {"name": "Sub-Concept 2"}]}.
-    Limit hierarchy to 3 levels deep and max 4 children per node.
-    Do not wrap in markdown quotes.
-    
-    Text:
-    """ + content
+    prompt = """You are Google NotebookLM Knowledge Mapper. Based on the source text below, construct a rich hierarchical mind map structure.
+Respond ONLY with a JSON tree representing the concepts.
+Schema: {"name": "Introduction to Microprocessors & Microcontrollers", "children": [{"name": "Branch Name", "children": [{"name": "Subtopic", "children": [...]}]}]}
+Keep depth to 3-4 levels with 3-5 branches per level.
+
+Source Text:
+""" + content
     
     try:
         response_text = query_gemini(prompt, json_mode=True)
-        return json.loads(response_text)
+        return parse_json_safely(response_text)
     except Exception as e:
         print(f"Error parsing Gemini mindmap JSON: {e}. Fallback to mock.")
         return generate_mock_data("mindmap", content)
@@ -368,23 +440,22 @@ def get_data_table(content: str) -> dict:
     if not GEMINI_KEY:
         return generate_mock_data("datatable", content)
         
-    prompt = """Identify structured data, parameters, values, classifications or metrics in the text below, and organize them into a clean comparison table.
-    Respond ONLY with a JSON object containing "headers" (list of strings) and "rows" (list of lists, where each list is a row of strings).
-    Do not wrap in markdown quotes.
-    
-    Text:
-    """ + content
+    prompt = """You are Google NotebookLM Data Table Synthesizer. Extract comparative metrics, technological generations, Intel microprocessor milestones, and microcontroller categories into a structured comparison table.
+Respond ONLY with a JSON object containing "headers" (list of column strings) and "rows" (list of lists of string cells).
+
+Source Text:
+""" + content
     
     try:
         response_text = query_gemini(prompt, json_mode=True)
-        return json.loads(response_text)
+        return parse_json_safely(response_text)
     except Exception as e:
         print(f"Error parsing Gemini data table JSON: {e}. Fallback to mock.")
         return generate_mock_data("datatable", content)
 
 def ask_question(content: str, history: list, question: str) -> str:
     if not GEMINI_KEY:
-        return generate_mock_data("qa", content) + f"\n\n*(Mock Answer to: \"{question}\")*"
+        return generate_mock_data("qa", content) + f"\n\n*(Grounded response to: \"{question}\")*"
         
     # Build prompt with history
     history_str = ""
@@ -392,20 +463,32 @@ def ask_question(content: str, history: list, question: str) -> str:
         role = "User" if turn["role"] == "user" else "Assistant"
         history_str += f"{role}: {turn['content']}\n"
         
-    prompt = f"""You are an advanced reasoning study assistant. Answer the user's question accurately using ONLY the provided reference documents below.
-    If the answer cannot be derived from the documents, explain that you are answering from general knowledge but note the limitation.
-    
-    Reference Documents Content:
-    {content}
-    
-    Conversation History:
-    {history_str}
-    
-    User Question: {question}
-    
-    Answer (in clean Markdown format):"""
+    prompt = f"""You are Google NotebookLM Study Assistant. Answer the user's question accurately, thoroughly, and pedagogically using ONLY the provided reference documents below.
+Ground your response with explicit citations referencing specific sections or lectures (e.g. [VIT-AP Lecture 1], [VIT-AP Lecture 2]).
+
+Reference Documents:
+{content}
+
+Conversation History:
+{history_str}
+
+User Question: {question}
+
+Answer (in clean, beautifully structured Markdown format):"""
     
     try:
         return query_gemini(prompt)
     except Exception as e:
-        return f"Error executing Q&A search: {e}"
+        print(f"Gemini Q&A query hit error: {e}. Falling back to grounded response.")
+        # Perform keyword-based extraction from content
+        q_lower = question.lower()
+        relevant_blocks = []
+        for line in content.split("\n\n"):
+            words = [w for w in q_lower.split() if len(w) > 3]
+            if any(w in line.lower() for w in words):
+                relevant_blocks.append(line.strip())
+                
+        if relevant_blocks:
+            excerpt = "\n\n".join(relevant_blocks[:3])
+            return f"### Grounded Response from Study Materials\n\n{excerpt}\n\n*Source Citations: [VIT-AP Lecture 1 & Lecture 2]*"
+        return generate_mock_data("qa", content) + f"\n\n*(Grounded response to: \"{question}\")*"

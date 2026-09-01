@@ -1,5 +1,6 @@
 import math
 import random
+import re
 
 # A standard short list of stop words
 STOP_WORDS = {
@@ -9,6 +10,49 @@ STOP_WORDS = {
     'her', 'which', 'who', 'has', 'have', 'had', 'been', 'about', 'can', 'will',
     'would', 'should', 'more', 'some', 'there', 'their'
 }
+
+def decompose_documents(documents: list[dict]) -> list[dict]:
+    """If there are few documents, break them down into conceptual sections for a rich knowledge graph."""
+    if len(documents) > 4:
+        return documents
+    
+    concept_docs = []
+    for doc in documents:
+        lines = doc["text"].split("\n")
+        current_title = doc["title"]
+        current_chunk = []
+        chunk_idx = 1
+        
+        for line in lines:
+            stripped = line.strip()
+            # Match section headers like "1. COURSE CONTENT:", "3. GENERATION OF COMPUTERS:"
+            if stripped and re.match(r'^[0-9]+\.\s+[A-Z0-9\s\(\)\,\-\&]+:', stripped):
+                if current_chunk:
+                    chunk_text = "\n".join(current_chunk).strip()
+                    if len(chunk_text) > 40:
+                        concept_docs.append({
+                            "id": f"{doc['id']}_sec_{chunk_idx}",
+                            "title": current_title,
+                            "text": chunk_text,
+                            "parent_id": doc["id"]
+                        })
+                        chunk_idx += 1
+                current_title = stripped.rstrip(":")
+                current_chunk = [line]
+            else:
+                current_chunk.append(line)
+                
+        if current_chunk:
+            chunk_text = "\n".join(current_chunk).strip()
+            if len(chunk_text) > 40:
+                concept_docs.append({
+                    "id": f"{doc['id']}_sec_{chunk_idx}",
+                    "title": current_title,
+                    "text": chunk_text,
+                    "parent_id": doc["id"]
+                })
+                
+    return concept_docs if len(concept_docs) >= 3 else documents
 
 def tokenize(text: str) -> list[str]:
     """Basic clean tokenization."""
@@ -195,17 +239,18 @@ def run_spring_layout(documents: list[dict], similarity_matrix: list[list[float]
             
     return positions
 
-def cluster_and_project(documents: list[dict], n_clusters: int = 3) -> dict:
+def cluster_and_project(documents: list[dict], n_clusters: int = 4) -> dict:
     """
     Groups documents into clusters and projects them onto a 2D plane.
     pure Python implementation.
     """
-    n = len(documents)
+    processed_docs = decompose_documents(documents)
+    n = len(processed_docs)
     if n == 0:
         return {"nodes": [], "edges": [], "clusters": []}
         
     if n == 1:
-        doc = documents[0]
+        doc = processed_docs[0]
         return {
             "nodes": [{
                 "id": doc["id"],
@@ -220,7 +265,7 @@ def cluster_and_project(documents: list[dict], n_clusters: int = 3) -> dict:
         }
         
     # Calculate tfidf vectors
-    vectors = compute_tfidf(documents)
+    vectors = compute_tfidf(processed_docs)
     
     # Compute similarity matrix
     similarity_matrix = [[0.0] * n for _ in range(n)]
@@ -234,10 +279,11 @@ def cluster_and_project(documents: list[dict], n_clusters: int = 3) -> dict:
                 similarity_matrix[j][i] = sim
                 
     # Run clustering
-    assignments, cluster_labels = run_kmeans(vectors, n_clusters=n_clusters)
+    actual_clusters = min(n_clusters, max(2, n // 2))
+    assignments, cluster_labels = run_kmeans(vectors, n_clusters=actual_clusters)
     
     # Calculate layout positions
-    positions = run_spring_layout(documents, similarity_matrix)
+    positions = run_spring_layout(processed_docs, similarity_matrix)
     
     # Scale coordinates to fit viewbox nicely (approx -200 to 200)
     x_coords = [p[0] for p in positions]
@@ -252,14 +298,15 @@ def cluster_and_project(documents: list[dict], n_clusters: int = 3) -> dict:
     nodes = []
     colors = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444", "#8B5CF6", "#EC4899", "#06B6D4"]
     
-    for idx, doc in enumerate(documents):
+    for idx, doc in enumerate(processed_docs):
         # Normalize and center
         x = ((x_coords[idx] - min_x) / x_span * 400 - 200) if x_span > 1 else x_coords[idx]
         y = ((y_coords[idx] - min_y) / y_span * 400 - 200) if y_span > 1 else y_coords[idx]
         
         c_id = assignments[idx]
         nodes.append({
-            "id": doc["id"],
+            "id": doc.get("parent_id", doc["id"]),
+            "node_id": doc["id"],
             "title": doc["title"],
             "x": float(x),
             "y": float(y),
@@ -273,11 +320,11 @@ def cluster_and_project(documents: list[dict], n_clusters: int = 3) -> dict:
     for i in range(n):
         for j in range(i + 1, n):
             sim = similarity_matrix[i][j]
-            if sim > 0.12: # Threshold to form a link
+            if sim > 0.08: # Threshold to form a link
                 edges.append({
                     "id": f"edge_{edge_idx}",
-                    "source": documents[i]["id"],
-                    "target": documents[j]["id"],
+                    "source": processed_docs[i]["id"],
+                    "target": processed_docs[j]["id"],
                     "similarity": float(sim)
                 })
                 edge_idx += 1

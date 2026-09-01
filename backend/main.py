@@ -70,50 +70,121 @@ class KeysPayload(BaseModel):
     anthropic_api_key: Optional[str] = None
 
 
-# Initial seed database if empty, to make the mock mode work beautifully out of the box!
+# Initial seed database if empty, to make the workspace work beautifully out of the box!
 def seed_if_empty():
     db = load_db()
     if not db.get("assets"):
-        # Let's insert a couple of mock documents
-        biology_text = """
-        Cell biology is a branch of biology that studies the structure, function, and behavior of cells. 
-        All living organisms are made of cells. A cell is the basic unit of life that is responsible for the living and functioning of organisms. 
-        mitosis is a part of the cell cycle in which replicated chromosomes are separated into two new nuclei. 
-        Cell division gives rise to genetically identical cells in which the total number of chromosomes is maintained. 
-        Mitochondria are double-membrane-bound organelles found in most eukaryotic organisms. 
-        They generate most of the cell's supply of adenosine triphosphate (ATP), used as a source of chemical energy. 
-        DNA, or deoxyribonucleic acid, is the hereditary material in humans and almost all other organisms. 
-        Nearly every cell in a person's body has the same DNA. Ribosomes are macromolecular machines, 
-        found within all living cells, that perform biological protein synthesis (translation).
+        lec1_text = """
+        VIT-AP UNIVERSITY - MODULE-I : LECTURE-1: INTRODUCTION TO MICROPROCESSORS
+        Faculty: Dr. Aruru Sai Kumar, Dr. Subhasish Mahapatra (School of Electronics Engineering - SENSE)
+        
+        1. COURSE CONTENT:
+        - Generation of Computers (1st to 5th Generation)
+        - Definition of Micro-processor
+        - Definition of Micro-controller
+        - Definition of Embedded System
+        
+        2. GENERAL PURPOSE COMPUTER (GPC) ARCHITECTURE:
+        The basic blocks of a general purpose computer are:
+        - Input Device
+        - Output Device
+        - Central Processing Unit (CPU): Consists of Control Unit, Arithmetic/Logic Unit (ALU), and Registers.
+        - Memory Block: Divided into Main Memory (RAM) and Secondary Memory (Hard Disk, Magnetic Tape, Magnetic Drum).
+        
+        3. GENERATION OF COMPUTERS:
+        - First Generation (1946 – 1954): Vacuum Tubes as CPU and main memory; Magnetic Tapes/Drums for secondary memory. Machine language only. Examples: ENIAC (1946), EDSAC (1949), EDVAC (1950), UNIVAC-1 (1951). Very large size, high energy consumption, fast heating, slow speed.
+        - Second Generation (1955 – 1964): Transistors replaced vacuum tubes; Magnetic ferrite-core main memory; Magnetic disks/tapes secondary memory. Assembly language. Examples: Honeywell 400, IBM 7094, CDC 1604, UNIVAC 1108.
+        - Third Generation (1965 – 1974): ICs (SSI & MSI) for CPU/logic; Semiconductor RAM/ROM replaced magnetic core; Mouse and keyboard input. Examples: IBM 360/370, CDC 6600, PDP, TDC-316.
+        - Fourth Generation (1975 – 1990): LSI Technology; true single-chip Microprocessors; GUI OS. Examples: IBM PC, Apple II, VAX 9000.
+        - Fifth Generation (1991 – Present): VLSI and ULSI technologies; single-chip Microcontrollers with integrated memory, timers, I/O ports; Windows and Linux OS.
+        
+        4. SEMICONDUCTOR INTEGRATION SCALES:
+        - SSI (1963): < 100 components
+        - MSI (1970): 100 – 1,000 components
+        - LSI (1975): 1,000 – 10,000 components
+        - VLSI (1980): 10,000 – 10^9 components
+        - ULSI (1990): > 10^6 components
+        - GSI (2010): > 10^10 components
+        
+        5. DEFINITIONS & APPLICATIONS:
+        - Microprocessor: Semiconductor device containing ALU, Control Unit, and Registers on a single chip, fabricated using LSI technology.
+        - Microcontroller: Semiconductor device combining CPU, Memory (RAM/ROM), Timers, and I/O ports on a single chip, fabricated using VLSI technology.
+        - Embedded System: Combination of hardware and software designed for a specific dedicated function within a larger system.
+        - Applications: Automotive (ABS, electronic ignition), Medical (ECG, dialysis, cancer treatments), Avionics/Military (missile guidance, GPS, surveillance), Consumer electronics (washing machines, clocks, toys, AV electronics), Communication (routers, smartphones, radios).
+        - Embedded Design Parameters: Power consumption, speed of execution, system size/weight, performance accuracy. Selection criteria: processing rate/size, I/O interfaces, memory capacity.
         """
-        quantum_text = """
-        Quantum mechanics is a fundamental theory in physics that provides a description of the physical properties of nature at the scale of atoms and subatomic particles. 
-        It is the foundation of all quantum physics including quantum chemistry, quantum field theory, quantum technology, and quantum information science.
-        Superposition is a principle of quantum mechanics where physical systems can exist in multiple states or configurations simultaneously until they are observed.
-        Quantum entanglement is a physical phenomenon that occurs when a group of particles are generated, interact, or share spatial proximity in a way such that the quantum state of each particle cannot be described independently.
-        Wave-particle duality is the concept in quantum mechanics that every particle or quantum entity may be described as either a particle or a wave.
-        Schrodinger's cat is a thought experiment that illustrates the paradox of quantum superposition in macroscopic objects.
+        
+        lec2_text = """
+        VIT-AP UNIVERSITY - MODULE-I : LECTURE-2: BASICS OF MICROPROCESSORS, MICROCONTROLLERS & MEMORY
+        Faculty: Dr. Aruru Sai Kumar, Dr. Subhasish Mahapatra (School of Electronics Engineering - SENSE)
+        
+        1. BASICS OF MICROPROCESSOR:
+        - Definition: Central Processing Unit (CPU) built on a single Integrated Circuit (IC). Known as the "brain of the computer", capable of processing 8, 16, 32, or 64 bits simultaneously at extremely high speed.
+        - Building Blocks: Arithmetic Logic Unit (ALU), Control Unit (CU), Bank of Registers (Register File), Program Counter (PC), Timing/Clock Unit, and Interconnection Buses.
+        
+        2. INTEL MICROPROCESSOR EVOLUTION:
+        - 4004 (1971): 4-bit Data Bus, 8-bit Address Bus
+        - 8008 (1972): 8-bit Data Bus, 8-bit Address Bus
+        - 8080 (1974): 8-bit Data Bus, 16-bit Address Bus
+        - 8085 (1977): 8-bit Data Bus, 16-bit Address Bus
+        - 8086 (1978): 16-bit Data Bus, 20-bit Address Bus (1 MB addressable)
+        - 80186 (1982) & 80286 (1983): 16-bit Data Bus, 20/24-bit Address Bus
+        - 80386 (1986) & 80486 (1989): 32-bit Data Bus, 32-bit Address Bus (4 GB addressable)
+        - Pentium (1993+), Core 2 Duo (2006), Core 2 Quad (2008): 32-bit
+        - Core i3, i5, i7 (2010 onwards): 64-bit Data Bus
+        
+        3. SYSTEM BUS ARCHITECTURE:
+        - Data Bus: Bidirectional, transfers actual data. Bus width determines data throughput.
+        - Address Bus: Unidirectional (CPU -> Memory/IO), transfers memory addresses. Bus width N determines max addressable memory (2^N bytes).
+        - Control Bus: Transfers control and timing commands (Read RD, Write WR, Interrupt, Clock, Reset).
+        
+        4. INSTRUCTION EXECUTION CYCLE (FETCH - DECODE - EXECUTE):
+        - 3 Phases: Fetch opcode from memory using PC address & RD signal -> Decode opcode in Control Unit -> Execute ALU operation and writeback to register/memory.
+        - Example (R = X + Y): Fetch addition instruction -> CU decodes opcode -> Fetch X into Reg 1, fetch Y into Reg 2 -> ALU executes addition -> Store sum into accumulator -> Write sum back to memory address R.
+        
+        5. MICROCONTROLLER ARCHITECTURES & COMPARISON:
+        - 8-bit Microcontrollers: AVR, PIC, HCS12, 8051 (1-byte ALU operations).
+        - 16-bit Microcontrollers: Extended 8051XA, Intel 8096, MC68HC12 (2-byte ALU operations).
+        - 32-bit Microcontrollers: ARM Cortex-M, PIC32, Intel 80960, Atmel 251 (4-byte ALU operations).
+        - Microcontroller vs Microcomputer (PC): PC integrates CPU, RAM, ROM, and I/O on separate chips on a motherboard for general purpose tasks; Microcontroller integrates all components on a single chip for dedicated embedded control with lower latency and higher specialized speed.
+        
+        6. MEMORY SYSTEMS (RAM VS ROM):
+        - Digital electronic circuits built with CMOS cells for binary storage.
+        - RAM: Read and Write memory, volatile.
+        - ROM: Read-only memory, non-volatile.
+        - Operations: Memory Write (storing new data) and Memory Read (transferring stored data out).
         """
+        
         db["assets"] = [
             {
-                "id": "mock-bio",
-                "title": "Introduction to Cell Biology.pdf (Sample)",
+                "id": "vit-ap-lec-1",
+                "title": "VIT-AP Lecture 1: Introduction to Microprocessors & Computer Generations",
                 "type": "file",
-                "content": clean_text(biology_text),
-                "created_at": "2026-08-27T12:00:00Z"
+                "content": clean_text(lec1_text),
+                "created_at": "2026-09-01T10:00:00Z"
             },
             {
-                "id": "mock-quantum",
-                "title": "Quantum Mechanics & Superposition (Sample Link)",
-                "type": "url",
-                "content": clean_text(quantum_text),
-                "created_at": "2026-08-27T12:05:00Z"
+                "id": "vit-ap-lec-2",
+                "title": "VIT-AP Lecture 2: Microprocessor Architecture, Instruction Cycles & Microcontrollers",
+                "type": "file",
+                "content": clean_text(lec2_text),
+                "created_at": "2026-09-01T10:15:00Z"
             }
         ]
         save_db(db)
 
 seed_if_empty()
 
+@app.get("/")
+def root():
+    return {
+        "message": "Styrud API is running",
+        "frontend_url": "http://localhost:5173",
+        "docs_url": "http://127.0.0.1:8001/docs",
+        "status_url": "http://127.0.0.1:8001/api/status"
+    }
+
+@app.get("/api/health")
 @app.get("/api/status")
 def get_status():
     keys = ai.has_keys()
@@ -343,4 +414,4 @@ def save_keys(payload: KeysPayload):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("backend.main:app", host="127.0.0.1", port=8001, reload=True)

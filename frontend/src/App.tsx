@@ -22,7 +22,8 @@ import {
   X,
   Sun,
   Moon,
-  Sparkles
+  Sparkles,
+  Bot
 } from 'lucide-react';
 
 // View components
@@ -39,6 +40,7 @@ import InfographicViewer from './components/InfographicViewer';
 import DataTableViewer from './components/DataTableViewer';
 import MagnificationDock from './components/MagnificationDock';
 import NotebookLMModal from './components/NotebookLMModal';
+import NotebookLMBotModal from './components/NotebookLMBotModal';
 import { NOTEBOOKLM_TASKS, triggerFileDownload, copyToClipboard } from './utils/notebooklmBridge';
 
 // Helper component to filter out dark background textures from logo images programmatically
@@ -561,6 +563,36 @@ export default function App() {
       console.error("NotebookLM launch error:", err);
       alert(err.message || "Failed to launch Google NotebookLM bridge.");
     }
+  };
+
+  // Playwright Automation Bot modal states
+  const [botModalOpen, setBotModalOpen] = useState(false);
+  const [botModalData, setBotModalData] = useState<{
+    toolId: string;
+    toolTitle: string;
+  }>({
+    toolId: 'reports',
+    toolTitle: 'Research Report'
+  });
+
+  const handleOpenBotModal = (toolId: string = 'reports') => {
+    const titleMap: Record<string, string> = {
+      audio: 'Audio Overview',
+      reports: 'Research Report',
+      quiz: 'Interactive Quiz',
+      flashcards: 'Recall Flashcards',
+      slides: 'Slide Deck Presentation',
+      video: 'Video Overview',
+      mindmap: 'Concept Mind Map',
+      infographic: 'Infographic Timeline',
+      datatable: 'Comparison Data Table',
+      summary: 'Executive Summary'
+    };
+    setBotModalData({
+      toolId,
+      toolTitle: titleMap[toolId] || 'Study Materials'
+    });
+    setBotModalOpen(true);
   };
 
   // Load backend status and assets list
@@ -1173,6 +1205,16 @@ export default function App() {
               <span>Open in NotebookLM ↗</span>
             </button>
 
+            {/* Playwright Bot Auto-Runner Button */}
+            <button
+              onClick={() => handleOpenBotModal(activeTool || 'reports')}
+              title="Launch Playwright Bot to automatically create notebook & execute task"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-pink-600/30 to-purple-600/30 hover:from-pink-600/50 hover:to-purple-600/50 border border-pink-500/40 text-pink-200 hover:text-white rounded-full text-[10px] font-bold uppercase tracking-wider transition-all duration-300 active:scale-95 shadow-md"
+            >
+              <Bot className="w-3.5 h-3.5 text-pink-400" />
+              <span>Auto-Bot 🤖</span>
+            </button>
+
             <div className="flex items-center gap-1.5 text-zinc-550 pl-2 border-l border-white/10">
               <span className="text-[11px] uppercase tracking-wider">LAYOUT: </span>
               <span className="text-white font-bold capitalize text-shadow-observe">
@@ -1245,6 +1287,7 @@ export default function App() {
                 if (params) setExtraParams(params);
               }}
               onLaunchNotebookLM={handleLaunchNotebookLM}
+              onLaunchBot={handleOpenBotModal}
             />
           )}
         </div>
@@ -1448,6 +1491,15 @@ export default function App() {
         filename={notebookModalData.filename}
         assetsCount={notebookModalData.assetsCount}
         fileContent={notebookModalData.fileContent}
+      />
+
+      {/* Playwright Automation Bot Modal */}
+      <NotebookLMBotModal 
+        isOpen={botModalOpen}
+        onClose={() => setBotModalOpen(false)}
+        toolId={botModalData.toolId}
+        toolTitle={botModalData.toolTitle}
+        assetId={selectedAssetId}
       />
 
     </div>

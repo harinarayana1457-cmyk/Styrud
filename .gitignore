@@ -13,6 +13,8 @@ backend/uploads/*
 backend/static/audio/*
 !backend/uploads/.gitkeep
 !backend/static/audio/.gitkeep
+.browser_profile/
+backend/.browser_profile/
 
 # Production builds
 dist/

@@ -441,6 +441,74 @@ def save_keys(payload: KeysPayload):
     return {"status": "success", "message": "API keys saved and configured in memory."}
 
 
+# ==========================================
+# Google NotebookLM Playwright Bot Endpoints
+# ==========================================
+
+from backend.services.notebooklm_bot import bot as nlm_bot
+
+class BotExecutePayload(BaseModel):
+    tool_id: str
+    asset_id: Optional[str] = None
+    custom_prompt: Optional[str] = None
+    visible: bool = True
+
+@app.get("/api/notebooklm-bot/status")
+async def get_bot_status():
+    return await nlm_bot.check_status()
+
+@app.post("/api/notebooklm-bot/login")
+async def launch_bot_login():
+    return await nlm_bot.launch_login_session()
+
+@app.post("/api/notebooklm-bot/execute")
+async def execute_bot_task(payload: BotExecutePayload):
+    db = load_db()
+    if not db["assets"]:
+        raise HTTPException(status_code=400, detail="No assets in workspace to upload.")
+        
+    if payload.asset_id:
+        selected = [a for a in db["assets"] if a["id"] == payload.asset_id]
+        if not selected:
+            raise HTTPException(status_code=404, detail="Selected asset not found")
+        assets = selected
+    else:
+        assets = db["assets"]
+        
+    # Combine all active sources
+    combined_sources = ""
+    for a in assets:
+        combined_sources += f"========================================\n"
+        combined_sources += f"SOURCE: {a['title']}\n"
+        combined_sources += f"TYPE: {a['type']} | DATE: {a['created_at']}\n"
+        combined_sources += f"========================================\n\n"
+        combined_sources += a['content'] + "\n\n\n"
+        
+    # Standard prompts per task
+    default_prompts = {
+        "audio": "Generate an Audio Overview deep dive",
+        "reports": "Please create an in-depth, academic-grade research briefing report with executive summary, technical breakdown, comparative analysis, and key study takeaways based strictly on these uploaded sources.",
+        "quiz": "Please generate a 5-question multiple choice evaluation quiz with 4 distinct options and detailed concept explanations for each correct answer based on these uploaded sources.",
+        "flashcards": "Please create 8 high-yield active recall flashcards for exam preparation covering core definitions, formulas, component functions, and architectures from these sources.",
+        "slides": "Please generate a structured 6-slide presentation deck with clear headlines, high-impact bullet points, and visual illustration cues based on these uploaded sources.",
+        "video": "Please create a video overview presentation script with synchronized narration cues and key bullet points based on these uploaded sources.",
+        "mindmap": "Please construct a hierarchical concept map and knowledge tree breaking down all main themes, subtopics, and granular definitions from these uploaded sources.",
+        "infographic": "Please extract the key evolutionary milestones, hardware generations, and engineering design parameters into a structured infographic timeline and process map.",
+        "datatable": "Please build a structured comparative data matrix distinguishing architectures, technical specifications, and processor categories from these uploaded sources.",
+        "summary": "Please provide a high-yield executive summary and core takeaways from these uploaded sources."
+    }
+    
+    prompt = payload.custom_prompt or default_prompts.get(payload.tool_id, default_prompts["reports"])
+    
+    result = await nlm_bot.execute_task(
+        task_id=payload.tool_id,
+        sources_text=combined_sources,
+        prompt=prompt,
+        visible=payload.visible
+    )
+    return result
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend.main:app", host="127.0.0.1", port=8001, reload=True)

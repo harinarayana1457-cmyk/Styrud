@@ -10,15 +10,17 @@ import {
   BarChart4, 
   Table,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Bot
 } from 'lucide-react';
 
 interface StyrudDashboardProps {
   onSelectTool: (tool: string, extra?: any) => void;
   onLaunchNotebookLM?: (tool: string) => void;
+  onLaunchBot?: (tool: string) => void;
 }
 
-export default function StyrudDashboard({ onSelectTool, onLaunchNotebookLM }: StyrudDashboardProps) {
+export default function StyrudDashboard({ onSelectTool, onLaunchNotebookLM, onLaunchBot }: StyrudDashboardProps) {
   const [selectedLanguage, setSelectedLanguage] = useState('english');
   const [notebookLMMode, setNotebookLMMode] = useState(false);
 
@@ -260,6 +262,19 @@ export default function StyrudDashboard({ onSelectTool, onLaunchNotebookLM }: St
                     >
                       <Sparkles className="w-2.5 h-2.5 text-purple-400" />
                       <span>NotebookLM ↗</span>
+                    </button>
+                  )}
+                  {onLaunchBot && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLaunchBot(t.id);
+                      }}
+                      title={`Automate ${t.title} using local Playwright Bot`}
+                      className="px-2 py-0.5 rounded-full bg-pink-500/15 hover:bg-pink-500/30 border border-pink-500/30 text-[8px] font-mono font-bold uppercase tracking-wider text-pink-300 hover:text-white transition flex items-center gap-1"
+                    >
+                      <Bot className="w-2.5 h-2.5 text-pink-400" />
+                      <span>Bot 🤖</span>
                     </button>
                   )}
                   {t.beta && (

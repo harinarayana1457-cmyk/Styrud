@@ -35,9 +35,23 @@
   <b>Styrud</b> merges the multi-speaker research synthesis of <b>Google NotebookLM</b> with the interactive 2D force-directed knowledge graph of <b>Recall</b>. Built with an ultra-responsive glassmorphic React + Vite interface, a resilient FastAPI backend, and an autonomous <b>Playwright Browser Automation Bot</b>, Styrud transforms lecture notes, PDFs, textbooks, and web links into an animated visual study galaxy.
 </p>
 
-[🚀 1-Click Deploy to Vercel](#-1-click-deploy-to-vercel) • [✨ Highlights](#-highlights--what-makes-styrud-better) • [🤖 Playwright Bot](#-autonomous-notebooklm-playwright-bot) • [🚀 Key Features](#-key-features) • [⚡ Local Setup](#-quickstart-guide) • [📖 API Reference](#-api-endpoints-reference) • [📁 Project Structure](#-project-structure) • [🔗 Connect](#-connect--contribute)
+[📖 About](#-about-styrud) • [🚀 1-Click Deploy](#-1-click-deploy-to-vercel) • [✨ Highlights](#-highlights--what-makes-styrud-better) • [🤖 Playwright Bot](#-autonomous-notebooklm-playwright-bot) • [🚀 Key Features](#-key-features) • [⚡ Local Setup](#-quickstart-guide) • [📖 API Reference](#-api-endpoints-reference)
 
 </div>
+
+---
+
+## 📖 About Styrud
+
+> **🪐 Styrud** is an autonomous AI-powered study galaxy that merges the multi-speaker research synthesis of **Google NotebookLM** with the interactive 2D force-directed knowledge graph of **Recall**.
+
+| Resource | Link / Access |
+|---|---|
+| **🚀 Vercel 1-Click Deployment** | [**Deploy to Vercel**](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fharinarayana1457-cmyk%2FStyrud) |
+| **🐙 GitHub Repository** | [**github.com/harinarayana1457-cmyk/Styrud**](https://github.com/harinarayana1457-cmyk/Styrud) |
+| **⚡ Local Frontend** | `http://localhost:5173` |
+| **⚙️ Local Backend API** | `http://127.0.0.1:8001` (Swagger: `/docs`) |
+| **🪐 Google NotebookLM** | `https://notebooklm.google.com` |
 
 ---
 

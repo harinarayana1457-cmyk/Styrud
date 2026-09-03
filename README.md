@@ -4,17 +4,17 @@
 ### The Autonomous AI Study Galaxy: Google NotebookLM + Recall Force-Directed Knowledge Engine
 
 <p align="center">
+  <a href="https://styrud-lgf3.vercel.app"><img src="https://img.shields.io/badge/Live%20App-styrud--lgf3.vercel.app-00C7B7?style=for-the-badge&logo=vercel&logoColor=white" alt="Live App" /></a>
   <a href="https://github.com/harinarayana1457-cmyk/Styrud"><img src="https://img.shields.io/badge/GitHub-Styrud%20Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repo" /></a>
-  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fharinarayana1457-cmyk%2FStyrud"><img src="https://img.shields.io/badge/Vercel-Deploy%20to%20Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Deploy to Vercel" /></a>
-  <a href="http://localhost:5173"><img src="https://img.shields.io/badge/App-Localhost%3A5173-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Localhost App" /></a>
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fharinarayana1457-cmyk%2FStyrud"><img src="https://img.shields.io/badge/Vercel-Deploy%20Your%20Own-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Deploy to Vercel" /></a>
   <a href="http://127.0.0.1:8001/docs"><img src="https://img.shields.io/badge/API-Swagger%20Docs-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="Swagger Docs" /></a>
   <a href="https://notebooklm.google.com"><img src="https://img.shields.io/badge/Bridge-Google%20NotebookLM-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="NotebookLM" /></a>
   <a href="https://playwright.dev"><img src="https://img.shields.io/badge/Bot-Playwright%20Automation-2EAD33?style=for-the-badge&logo=playwright&logoColor=white" alt="Playwright" /></a>
 </p>
 
 <p align="center">
-  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fharinarayana1457-cmyk%2FStyrud">
-    <img src="https://vercel.com/button" alt="Deploy with Vercel" />
+  <a href="https://styrud-lgf3.vercel.app">
+    <img src="https://img.shields.io/badge/🚀%20Open%20Live%20Galaxy-styrud--lgf3.vercel.app-6366F1?style=for-the-badge&logoColor=white" alt="Open Live App" />
   </a>
 </p>
 
@@ -35,7 +35,7 @@
   <b>Styrud</b> merges the multi-speaker research synthesis of <b>Google NotebookLM</b> with the interactive 2D force-directed knowledge graph of <b>Recall</b>. Built with an ultra-responsive glassmorphic React + Vite interface, a resilient FastAPI backend, and an autonomous <b>Playwright Browser Automation Bot</b>, Styrud transforms lecture notes, PDFs, textbooks, and web links into an animated visual study galaxy.
 </p>
 
-[📖 About](#-about-styrud) • [🚀 1-Click Deploy](#-1-click-deploy-to-vercel) • [✨ Highlights](#-highlights--what-makes-styrud-better) • [🤖 Playwright Bot](#-autonomous-notebooklm-playwright-bot) • [🚀 Key Features](#-key-features) • [⚡ Local Setup](#-quickstart-guide) • [📖 API Reference](#-api-endpoints-reference)
+[🌐 Live App](https://styrud-lgf3.vercel.app) • [📖 About](#-about-styrud) • [🚀 1-Click Deploy](#-1-click-deploy-to-vercel) • [✨ Highlights](#-highlights--what-makes-styrud-better) • [🤖 Playwright Bot](#-autonomous-notebooklm-playwright-bot) • [🚀 Key Features](#-key-features) • [⚡ Local Setup](#-quickstart-guide) • [📖 API Reference](#-api-endpoints-reference)
 
 </div>
 
@@ -47,28 +47,14 @@
 
 | Resource | Link / Access |
 |---|---|
-| **🚀 Vercel 1-Click Deployment** | [**Deploy to Vercel**](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fharinarayana1457-cmyk%2FStyrud) |
+| **🌐 Live Production Application** | [**https://styrud-lgf3.vercel.app**](https://styrud-lgf3.vercel.app) |
+| **🚀 Vercel 1-Click Deployment** | [**Deploy Your Own on Vercel**](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fharinarayana1457-cmyk%2FStyrud) |
 | **🐙 GitHub Repository** | [**github.com/harinarayana1457-cmyk/Styrud**](https://github.com/harinarayana1457-cmyk/Styrud) |
-| **⚡ Local Frontend** | `http://localhost:5173` |
+| **⚡ Local Dev Frontend** | `http://localhost:5173` |
 | **⚙️ Local Backend API** | `http://127.0.0.1:8001` (Swagger: `/docs`) |
 | **🪐 Google NotebookLM** | `https://notebooklm.google.com` |
 
 ---
-
-## 📊 Feature Comparison: Styrud vs. Others
-
-| Feature | Standard NotebookLM | Recall | 🪐 **Styrud** |
-|---|:---:|:---:|:---:|
-| **Grounded Source Q&A with Citations** | ✅ | ❌ | ✅ **Multi-turn with slide references** |
-| **Interactive 2D Semantic Knowledge Galaxy** | ❌ | ✅ | ✅ **Force-directed TF-IDF graph** |
-| **Multi-Lingual Audio Briefings** | English only | ❌ | ✅ **English + 9 Indian Languages** |
-| **Automated Playwright Browser Bot** | ❌ | ❌ | ✅ **Creates notebooks & uploads sources** |
-| **1-Click Source Packager & Prompt Bridge** | ❌ | ❌ | ✅ **Auto-downloads & copies prompts** |
-| **Active Recall Flashcards (3D Flip)** | ❌ | ❌ | ✅ **Interactive flip cards & mastery** |
-| **Interactive Scored Evaluation Quizzes** | ❌ | ❌ | ✅ **5-question quiz with explanations** |
-| **Hierarchical Concept Mind Maps** | ❌ | ❌ | ✅ **Visual 4-tier tree visualizer** |
-| **Slide Deck Presentations & Timelines** | ❌ | ❌ | ✅ **Structured slide reader & infographics** |
-| **Resilient Offline Dual-Engine Fallback** | ❌ | ❌ | ✅ **Zero-downtime offline generator** |
 
 ## 🚀 1-Click Deploy to Vercel
 

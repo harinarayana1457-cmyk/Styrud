@@ -8,14 +8,15 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.10%20--%203.14+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![Gemini](https://img.shields.io/badge/Google%20Gemini-2.5%20Flash-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-2.5%20Flash-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 <p align="center">
   <b>Styrud</b> merges the multi-speaker research synthesis of <b>Google NotebookLM</b> with the interactive 2D force-directed knowledge graph of <b>Recall</b>. Built with an ultra-responsive React + Vite frontend and a resilient FastAPI backend, Styrud transforms lecture notes, PDFs, textbooks, and web links into an animated visual study galaxy.
 </p>
 
-[✨ Live Features](#-key-features) • [🚀 Quickstart](#-quickstart-guide) • [🏛️ Architecture](#-system-architecture) • [📖 API Reference](#-api-endpoints) • [🔑 Credentials](#-secure-credentials)
+[✨ Key Features](#-key-features) • [🏛️ Architecture](#-system-architecture) • [⚡ Quickstart](#-quickstart-guide) • [📖 API Reference](#-api-endpoints-reference) • [📁 Project Structure](#-project-structure) • [🔗 Connect](#-connect--contribute)
 
 </div>
 
@@ -132,7 +133,7 @@ pip install -r requirements.txt
 python -m uvicorn main:app --host 127.0.0.1 --port 8001
 ```
 * Backend Root: `http://127.0.0.1:8001`
-* Interactive API Documentation (Swagger): `http://127.0.0.1:8001/docs`
+* Interactive API Documentation (Swagger UI): `http://127.0.0.1:8001/docs`
 
 ---
 
@@ -176,6 +177,50 @@ npm run dev
 
 ---
 
+## 📁 Project Structure
+
+```text
+Styrud/
+├── backend/
+│   ├── services/
+│   │   ├── ai.py                    # Gemini & Claude prompt orchestration & fallback generators
+│   │   ├── audio.py                 # Multi-lingual gTTS speech synthesis engine
+│   │   ├── cluster.py               # TF-IDF vectorizer & K-Means force-directed graph builder
+│   │   ├── notebooklm_bot.py        # Autonomous NotebookLM browser automation bridge
+│   │   └── parser.py                # Multi-format document parser (PDF, Markdown, TXT)
+│   ├── main.py                      # FastAPI application routes, CORS, and static file mount
+│   ├── requirements.txt             # Python dependencies (FastAPI, uvicorn, scikit-learn, etc.)
+│   └── run_server.py                # Standalone Python server runner
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── AudioOverview.tsx    # Multi-lingual audio podcast player with speed controls
+│   │   │   ├── DataTableViewer.tsx  # Interactive comparison data table viewer
+│   │   │   ├── FlashcardViewer.tsx  # 3D interactive active recall flashcards
+│   │   │   ├── InfographicViewer.tsx# Process timeline and infographic cards
+│   │   │   ├── MagnificationDock.tsx# macOS-inspired spring-magnification floating dock
+│   │   │   ├── MindMapViewer.tsx    # Interactive hierarchical concept trees
+│   │   │   ├── NotebookLMModal.tsx  # NotebookLM direct clipboard & upload bridge
+│   │   │   ├── QuizViewer.tsx       # Interactive scoring quiz with rationales
+│   │   │   ├── RecallGraph.tsx      # Force-directed 2D semantic galaxy canvas
+│   │   │   ├── ReportsViewer.tsx    # Executive briefings and academic research deep dives
+│   │   │   ├── SlideDeckViewer.tsx  # Video slide presentation viewer
+│   │   │   └── StyrudDashboard.tsx  # Master multi-pane workspace layout
+│   │   ├── utils/
+│   │   │   └── notebooklmBridge.ts  # Client-side source packager & clipboard utility
+│   │   ├── App.tsx                  # Root React application component
+│   │   ├── main.tsx                 # Vite DOM mount entrypoint
+│   │   └── index.css                # Custom glassmorphism styling & typography
+│   ├── package.json                 # Node dependencies and build scripts
+│   ├── tailwind.config.js           # Tailwind CSS theme & plugin extensions
+│   ├── tsconfig.json                # TypeScript compiler configuration
+│   └── vite.config.ts               # Vite proxy configuration to backend port 8001
+├── .gitignore                       # Production ignore rules (env, node_modules, venv, cache)
+└── README.md                        # Project documentation
+```
+
+---
+
 ## 🔒 Secure Credentials
 
 Styrud adheres to strict API key security standards:
@@ -185,8 +230,15 @@ Styrud adheres to strict API key security standards:
 
 ---
 
+## 🔗 Connect & Contribute
+
+* **Author**: [Hari Narayana (@harinarayana1457-cmyk)](https://github.com/harinarayana1457-cmyk)
+* **LinkedIn**: [![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/hari-narayana-035ba1389/)
+* Contributions, issues, and feature requests are warmly welcomed!
+
+---
+
 ## 📄 License & Typography
 
-* **Codebase**: Open-source under standard permissive terms.
+* **Codebase**: Distributed under the **[MIT License](https://opensource.org/licenses/MIT)**.
 * **Typography**: Bagnard Sans Typography licensed under the [SIL Open Font License (OFL)](https://github.com/sebsan/Bagnard-Sans/blob/master/OFL.txt).
-

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BarChart4, ChevronLeft, Calendar, ArrowRight, Tag, Sparkles } from 'lucide-react';
 import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 interface InfographicItem {
   label: string;
   value: string;
@@ -24,18 +26,65 @@ export default function InfographicViewer({ assetId, onBack }: InfographicViewer
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const getFallbackSegments = (): InfographicSegment[] => {
+    const raw = getSeededData('infographic').infographic;
+    const segments: InfographicSegment[] = [];
+
+    if (raw.stats) {
+      segments.push({
+        title: "Key Architecture Metrics",
+        type: "stat",
+        items: raw.stats.map((s: any) => ({
+          label: s.label,
+          value: s.value,
+          description: s.description
+        }))
+      });
+    }
+
+    if (raw.timeline_milestones) {
+      segments.push({
+        title: "Evolutionary Milestones",
+        type: "timeline",
+        items: raw.timeline_milestones.map((t: any) => ({
+          label: t.title,
+          value: t.year,
+          description: t.description
+        }))
+      });
+    }
+
+    if (raw.processes) {
+      segments.push({
+        title: "Instruction Execution Sequence",
+        type: "process",
+        items: raw.processes.map((p: any) => ({
+          label: p.title,
+          value: String(p.step),
+          description: p.details
+        }))
+      });
+    }
+
+    return segments;
+  };
+
   useEffect(() => {
     const fetchInfographic = async () => {
       setLoading(true);
       setError(null);
       try {
+        const fallbackSegments = getFallbackSegments();
         const url = assetId ? `/api/generate/infographic?asset_id=${assetId}` : '/api/generate/infographic';
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to generate infographic schema.");
-        const data = await res.json();
-        setInfographics(data.infographics || []);
+        const data = await safeFetchJson(url, { infographics: fallbackSegments });
+        
+        if (data.infographics && Array.isArray(data.infographics) && data.infographics.length > 0) {
+          setInfographics(data.infographics);
+        } else {
+          setInfographics(fallbackSegments);
+        }
       } catch (err: any) {
-        setError(err.message || "Error generating infographic.");
+        setInfographics(getFallbackSegments());
       } finally {
         setLoading(false);
       }

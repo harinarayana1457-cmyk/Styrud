@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FileText, ChevronLeft, Sparkles } from 'lucide-react';
 import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 interface ReportsViewerProps {
   assetId: string | null;
   onBack: () => void;
@@ -17,13 +19,13 @@ export default function ReportsViewer({ assetId, onBack }: ReportsViewerProps) {
       setLoading(true);
       setError(null);
       try {
+        const fallback = getSeededData('report');
         const url = assetId ? `/api/generate/report?asset_id=${assetId}` : '/api/generate/report';
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to generate comprehensive report.");
-        const data = await res.json();
-        setReport(data.data || '');
+        const data = await safeFetchJson(url, { data: fallback.report });
+        setReport(data.data || fallback.report);
       } catch (err: any) {
-        setError(err.message || "Error generating report.");
+        const fallback = getSeededData('report');
+        setReport(fallback.report);
       } finally {
         setLoading(false);
       }

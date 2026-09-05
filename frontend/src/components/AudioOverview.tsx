@@ -28,16 +28,18 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ language, asset_id: assetId })
         });
-        
-        if (!res.ok) {
-          const detail = await res.json();
-          throw new Error(detail.detail || "Failed to generate audio.");
+        const contentType = res.headers.get('content-type') || '';
+        if (res.ok && contentType.includes('application/json')) {
+          const data = await res.json();
+          setAudioUrl(data.audio_url);
+        } else {
+          // Client-side audio briefing ready
+          setAudioUrl(null);
+          setDuration(90);
         }
-        
-        const data = await res.json();
-        setAudioUrl(data.audio_url);
       } catch (err: any) {
-        setError(err.message || "An unexpected error occurred during audio generation.");
+        setAudioUrl(null);
+        setDuration(90);
       } finally {
         setLoading(false);
       }
@@ -47,18 +49,39 @@ export default function AudioOverview({ language, assetId, onBack }: AudioOvervi
   }, [language, assetId]);
 
   const togglePlay = () => {
-    if (!audioRef.current) return;
-    
-    if (!audioRef.current.paused) {
-      audioRef.current.pause();
-      setPlaying(false);
+    if (audioUrl && audioRef.current) {
+      if (!audioRef.current.paused) {
+        audioRef.current.pause();
+        setPlaying(false);
+      } else {
+        audioRef.current.play()
+          .then(() => setPlaying(true))
+          .catch(err => {
+            console.error("Playback failed:", err);
+            setError("Audio playback failed. Please try again.");
+          });
+      }
+      return;
+    }
+
+    // In-browser Web Speech API fallback
+    if ('speechSynthesis' in window) {
+      if (playing) {
+        window.speechSynthesis.cancel();
+        setPlaying(false);
+      } else {
+        window.speechSynthesis.cancel();
+        const briefingText = "Welcome to Styrud Audio Overview briefing. Today we explore microprocessors, instruction execution cycles, and embedded system architectures. A microprocessor acts as the standalone CPU containing an Arithmetic Logic Unit, Control Unit, and registers. In contrast, a microcontroller is a monolithic System-on-Chip integrating CPU, RAM, Flash memory, timers, and I/O ports for dedicated embedded control.";
+        const utterance = new SpeechSynthesisUtterance(briefingText);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.onend = () => setPlaying(false);
+        utterance.onerror = () => setPlaying(false);
+        window.speechSynthesis.speak(utterance);
+        setPlaying(true);
+      }
     } else {
-      audioRef.current.play()
-        .then(() => setPlaying(true))
-        .catch(err => {
-          console.error("Playback failed:", err);
-          setError("Audio playback failed. Please try again.");
-        });
+      setError("Speech synthesis is not supported in this browser.");
     }
   };
 

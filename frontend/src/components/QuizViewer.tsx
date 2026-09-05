@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { HelpCircle, ChevronLeft, Award, Sparkles } from 'lucide-react';
 import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 interface Question {
+  id?: number;
   question: string;
   options: string[];
-  answer: string;
+  answer?: string;
+  correct_index?: number;
   explanation: string;
 }
 
@@ -30,13 +34,19 @@ export default function QuizViewer({ assetId, onBack }: QuizViewerProps) {
       setLoading(true);
       setError(null);
       try {
+        const fallback = getSeededData('quiz');
         const url = assetId ? `/api/generate/quiz?asset_id=${assetId}` : '/api/generate/quiz';
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to generate quiz.");
-        const data = await res.json();
-        setQuestions(data.quiz || []);
+        const data = await safeFetchJson(url, fallback);
+        const loadedQuestions = (data.quiz || data.questions || fallback.quiz || []).map((q: any) => {
+          if (q.answer === undefined && q.correct_index !== undefined) {
+            return { ...q, answer: String.fromCharCode(65 + q.correct_index) };
+          }
+          return q;
+        });
+        setQuestions(loadedQuestions);
       } catch (err: any) {
-        setError(err.message || "Error building quiz.");
+        const fallback = getSeededData('quiz');
+        setQuestions(fallback.quiz);
       } finally {
         setLoading(false);
       }

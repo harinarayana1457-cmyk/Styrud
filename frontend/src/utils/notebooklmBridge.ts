@@ -117,51 +117,65 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
+import { exportClientSources, DEFAULT_ASSETS, SourceAsset } from './seededData';
+
 /**
  * Main Bridge Action: Exports workspace sources, copies prompt, downloads file,
  * and opens Google NotebookLM in a new browser tab.
  */
 export async function exportAndLaunchNotebookLM(
   toolId: string = 'reports',
-  assetId?: string | null
-): Promise<{ success: boolean; prompt: string; filename: string; assetsCount: number; error?: string }> {
+  assetId?: string | null,
+  currentAssets?: SourceAsset[]
+): Promise<{ success: boolean; prompt: string; filename: string; assetsCount: number; fileContent?: string; error?: string }> {
+  const taskInfo = NOTEBOOKLM_TASKS[toolId] || NOTEBOOKLM_TASKS.reports;
+  let sourceData: { filename: string; content: string; assets_count: number; notebooklm_url: string };
+
   try {
     const url = assetId ? `/api/export-sources?asset_id=${encodeURIComponent(assetId)}` : '/api/export-sources';
     const res = await fetch(url);
+    const contentType = res.headers.get('content-type') || '';
     
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || 'Failed to export workspace sources');
+    if (res.ok && contentType.includes('application/json')) {
+      sourceData = await res.json();
+    } else {
+      // Graceful fallback for Vercel / offline mode
+      sourceData = exportClientSources(assetId, currentAssets && currentAssets.length > 0 ? currentAssets : DEFAULT_ASSETS);
     }
-    
-    const data = await res.json();
-    const taskInfo = NOTEBOOKLM_TASKS[toolId] || NOTEBOOKLM_TASKS.reports;
-    
+  } catch (err) {
+    console.warn('Backend unavailable, using client-side source packager:', err);
+    sourceData = exportClientSources(assetId, currentAssets && currentAssets.length > 0 ? currentAssets : DEFAULT_ASSETS);
+  }
+
+  try {
     // 1. Trigger source file download
-    const filename = data.filename || 'Styrud_NotebookLM_Sources.txt';
-    triggerFileDownload(filename, data.content);
+    const filename = sourceData.filename || 'Styrud_NotebookLM_Sources.txt';
+    triggerFileDownload(filename, sourceData.content);
     
     // 2. Copy specialized prompt to clipboard
     await copyToClipboard(taskInfo.prompt);
     
     // 3. Open Google NotebookLM in new tab
-    const notebookLMUrl = data.notebooklm_url || 'https://notebooklm.google.com';
+    const notebookLMUrl = sourceData.notebooklm_url || 'https://notebooklm.google.com';
     window.open(notebookLMUrl, '_blank');
     
     return {
       success: true,
       prompt: taskInfo.prompt,
       filename,
-      assetsCount: data.assets_count
+      assetsCount: sourceData.assets_count,
+      fileContent: sourceData.content
     };
   } catch (err: any) {
     console.error('NotebookLM Bridge error:', err);
     return {
       success: false,
-      prompt: '',
-      filename: '',
-      assetsCount: 0,
+      prompt: taskInfo.prompt,
+      filename: 'Styrud_NotebookLM_Sources.txt',
+      assetsCount: DEFAULT_ASSETS.length,
+      fileContent: '',
       error: err.message || 'Unknown error launching NotebookLM'
     };
   }
 }
+

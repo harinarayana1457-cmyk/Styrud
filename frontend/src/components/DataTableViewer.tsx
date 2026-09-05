@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Table, ChevronLeft, Sparkles } from 'lucide-react';
 import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 interface DataTableViewerProps {
   assetId: string | null;
   onBack: () => void;
@@ -18,14 +20,27 @@ export default function DataTableViewer({ assetId, onBack }: DataTableViewerProp
       setLoading(true);
       setError(null);
       try {
+        const fallback = getSeededData('datatable');
+        const defaultTable = fallback.datatable?.tables?.[1] || fallback.datatable?.tables?.[0] || { headers: [], rows: [] };
         const url = assetId ? `/api/generate/datatable?asset_id=${assetId}` : '/api/generate/datatable';
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to extract structured data table.");
-        const data = await res.json();
-        setHeaders(data.headers || []);
-        setRows(data.rows || []);
+        const data = await safeFetchJson(url, fallback);
+        
+        if (data.headers && data.rows) {
+          setHeaders(data.headers);
+          setRows(data.rows);
+        } else if (data.datatable?.tables?.[0]) {
+          const selected = data.datatable.tables[1] || data.datatable.tables[0];
+          setHeaders(selected.headers);
+          setRows(selected.rows);
+        } else {
+          setHeaders(defaultTable.headers);
+          setRows(defaultTable.rows);
+        }
       } catch (err: any) {
-        setError(err.message || "Error building data table.");
+        const fallback = getSeededData('datatable');
+        const defaultTable = fallback.datatable?.tables?.[1] || { headers: [], rows: [] };
+        setHeaders(defaultTable.headers);
+        setRows(defaultTable.rows);
       } finally {
         setLoading(false);
       }

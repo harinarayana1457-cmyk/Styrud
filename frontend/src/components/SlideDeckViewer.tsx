@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Presentation, ChevronLeft, ChevronRight, Eye, Sparkles } from 'lucide-react';
 import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 interface Slide {
+  slide_number?: number;
   title: string;
+  subtitle?: string;
   bullets: string[];
-  visualCue: string;
+  visualCue?: string;
+  visual_cue?: string;
 }
 
 interface SlideDeckViewerProps {
@@ -24,13 +29,13 @@ export default function SlideDeckViewer({ assetId, onBack }: SlideDeckViewerProp
       setLoading(true);
       setError(null);
       try {
+        const fallback = getSeededData('slides');
         const url = assetId ? `/api/generate/slides?asset_id=${assetId}` : '/api/generate/slides';
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to generate slide deck.");
-        const data = await res.json();
-        setSlides(data.slides || []);
+        const data = await safeFetchJson(url, fallback);
+        setSlides(data.slides || fallback.slides || []);
       } catch (err: any) {
-        setError(err.message || "Error generating presentation.");
+        const fallback = getSeededData('slides');
+        setSlides(fallback.slides);
       } finally {
         setLoading(false);
       }

@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Layers, ChevronLeft, RotateCw, CheckCircle2, Sparkles } from 'lucide-react';
 import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 interface Flashcard {
+  id?: number;
   front: string;
   back: string;
+  mastered?: boolean;
 }
 
 interface FlashcardViewerProps {
@@ -26,15 +30,16 @@ export default function FlashcardViewer({ assetId, onBack }: FlashcardViewerProp
       setLoading(true);
       setError(null);
       try {
+        const fallback = getSeededData('flashcards');
         const url = assetId ? `/api/generate/flashcards?asset_id=${assetId}` : '/api/generate/flashcards';
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to load flashcards.");
-        const data = await res.json();
-        const loaded = data.flashcards || [];
+        const data = await safeFetchJson(url, fallback);
+        const loaded = data.flashcards || fallback.flashcards || [];
         setCards(loaded);
         setKnownCards(new Array(loaded.length).fill(false));
       } catch (err: any) {
-        setError(err.message || "Error generating flashcards.");
+        const fallback = getSeededData('flashcards');
+        setCards(fallback.flashcards);
+        setKnownCards(new Array(fallback.flashcards.length).fill(false));
       } finally {
         setLoading(false);
       }

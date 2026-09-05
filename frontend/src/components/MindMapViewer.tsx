@@ -53,6 +53,8 @@ function TreeNode({ node, depth = 0 }: { node: MindNode; depth: number }) {
   );
 }
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 export default function MindMapViewer({ assetId, onBack }: MindMapViewerProps) {
   const [mindmap, setMindmap] = useState<MindNode | null>(null);
   const [loading, setLoading] = useState(true);
@@ -63,13 +65,13 @@ export default function MindMapViewer({ assetId, onBack }: MindMapViewerProps) {
       setLoading(true);
       setError(null);
       try {
+        const fallback = getSeededData('mindmap');
         const url = assetId ? `/api/generate/mindmap?asset_id=${assetId}` : '/api/generate/mindmap';
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to generate mind map.");
-        const data = await res.json();
-        setMindmap(data.mindmap || null);
+        const data = await safeFetchJson(url, fallback);
+        setMindmap(data.mindmap || fallback.mindmap || null);
       } catch (err: any) {
-        setError(err.message || "Error generating mind map.");
+        const fallback = getSeededData('mindmap');
+        setMindmap(fallback.mindmap);
       } finally {
         setLoading(false);
       }

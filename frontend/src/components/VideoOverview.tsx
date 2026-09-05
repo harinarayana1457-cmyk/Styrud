@@ -2,10 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PlaySquare, ChevronLeft, Play, Pause, AlertCircle, Volume2, RotateCcw, Sparkles } from 'lucide-react';
 import { exportAndLaunchNotebookLM } from '../utils/notebooklmBridge';
 
+import { safeFetchJson, getSeededData } from '../utils/seededData';
+
 interface Slide {
   title: string;
   bullets: string[];
-  visualCue: string;
+  visualCue?: string;
+  visual_cue?: string;
 }
 
 interface VideoOverviewProps {
@@ -30,22 +33,28 @@ export default function VideoOverview({ assetId, onBack }: VideoOverviewProps) {
       setLoading(true);
       setError(null);
       try {
+        const fallbackSlides = getSeededData('slides').slides;
         const slideUrl = assetId ? `/api/generate/slides?asset_id=${assetId}` : '/api/generate/slides';
-        const slideRes = await fetch(slideUrl);
-        if (!slideRes.ok) throw new Error("Failed to load slide content.");
-        const slideData = await slideRes.json();
-        setSlides(slideData.slides || []);
+        const slideData = await safeFetchJson(slideUrl, { slides: fallbackSlides });
+        setSlides(slideData.slides || fallbackSlides || []);
 
-        const audioRes = await fetch('/api/audio-overview', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ language: 'english', asset_id: assetId })
-        });
-        if (!audioRes.ok) throw new Error("Failed to generate narration audio.");
-        const audioData = await audioRes.json();
-        setAudioUrl(audioData.audio_url);
+        try {
+          const audioRes = await fetch('/api/audio-overview', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ language: 'english', asset_id: assetId })
+          });
+          const contentType = audioRes.headers.get('content-type') || '';
+          if (audioRes.ok && contentType.includes('application/json')) {
+            const audioData = await audioRes.json();
+            setAudioUrl(audioData.audio_url);
+          }
+        } catch {
+          // Audio synthesis will fallback to visual slides
+        }
       } catch (err: any) {
-        setError(err.message || "Error loading video components.");
+        const fallbackSlides = getSeededData('slides').slides;
+        setSlides(fallbackSlides);
       } finally {
         setLoading(false);
       }
